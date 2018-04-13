@@ -1,0 +1,37 @@
+#' German Credit Data
+#'
+#' This data comes from the \url{https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)}.
+#'
+#' @section Variables:
+#'
+#' \itemize{
+#'
+#'    \item \code{status_of_existing_checking_account}: Status of existing checking account.
+#'    \item \code{duration_in_month}: Duration in month.
+#'    \item \code{credit_history}: Credit history.
+#'    \item \code{purpose}: Purpose.
+#'    \item \code{credit_amount}: Credit amount.
+#'    \item \code{savings_account_or_bonds}: Savings account/bonds.
+#'    \item \code{present_employment_since}: Present employment since.
+#'    \item \code{installment_rate_in_percentage_of_disposable_income}: Installment rate in percentage of disposable income.
+#'    \item \code{personal_status_and_sex}: Personal status and sex.
+#'    \item \code{other_debtors_or_guarantors}: Other debtors / guarantors.
+#'    \item \code{present_residence_since}: Present residence since.
+#'    \item \code{property}: Property.
+#'    \item \code{age_in_years}: Age in years.
+#'    \item \code{other_installment_plans}: Other installment plans.
+#'    \item \code{housing}: Housing.
+#'    \item \code{number_of_existing_credits_at_this_bank}: Number of existing credits at this bank.
+#'    \item \code{job}: Job.
+#'    \item \code{number_of_people_being_liable_to_provide_maintenance_for}: Number of people being liable to provide maintenance for.
+#'    \item \code{telephone}: Telephone.
+#'    \item \code{foreign_worker}: foreign worker.
+#'    \item \code{good_bad}: Good or bad account.
+#'
+#' }
+#'
+#' @docType data
+#' @name german_credit
+#' @usage german_credit
+#' @format A \code{data frame} with 1000 observations and 21 variables.
+"german_credit"
