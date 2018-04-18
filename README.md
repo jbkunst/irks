@@ -1,5 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+[![Travis build status](https://travis-ci.org/jbkunst/irks.svg?branch=master)](https://travis-ci.org/jbkunst/irks) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/jbkunst/irks?branch=master&svg=true)](https://ci.appveyor.com/project/jbkunst/irks)
+
 irks
 ====
 
@@ -32,20 +34,20 @@ var_importance(rf)
 #> # A tibble: 4 x 2
 #>   variable     importance
 #>   <chr>             <dbl>
-#> 1 Petal.Width       45.2 
-#> 2 Petal.Length      41.6 
-#> 3 Sepal.Length      10.00
-#> 4 Sepal.Width        2.45
+#> 1 Petal.Length      43.7 
+#> 2 Petal.Width       42.6 
+#> 3 Sepal.Length      10.3 
+#> 4 Sepal.Width        2.61
 
 rrf <- RRF::RRF(Species ~ ., data = iris)
 var_importance(rrf)
 #> # A tibble: 4 x 2
 #>   variable     importance
 #>   <chr>             <dbl>
-#> 1 Petal.Width       53.8 
-#> 2 Petal.Length      42.8 
-#> 3 Sepal.Width        1.41
-#> 4 Sepal.Length       1.26
+#> 1 Petal.Width       50.7 
+#> 2 Petal.Length      46.0 
+#> 3 Sepal.Width        1.37
+#> 4 Sepal.Length       1.23
 
 
 suppressMessages(library(partykit))

@@ -69,12 +69,15 @@ model_summary <- function(model) {
 }
 
 #' Creating a scorecard from logistic model
+#'
+#' The defaults are given by de Siddiqi example.
+#'
 #' @param model A glm logistic model
 #' @param pdo default 20
 #' @param score0 default 600
 #' @param pdo0 default to 20
 #' @export
-model_scorecad <- function(model, pdo = 20, score0 = 600, pdo0 = 20) {
+scorecard <- function(model, pdo = 50:1, score0 = 600, pdo0 = 20) {
 
   mod <- model_summary(model)
 

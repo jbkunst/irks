@@ -1,11 +1,11 @@
 Package: irks
 Type: Package
-Title: Functions To Develop Credit Risk Models
+Title: Tools for credit risk modelling
 Version: 0.1.0
 Author: Joshua Kunst
 Maintainer: Joshua Kunst <jbkunst@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: A set of functions to help the development, implementation and
+    monitoring scorecards.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -21,7 +21,8 @@ Imports:
   broom,
   partykit,
   randomForest,
-  RRF
+  RRF,
+  ROCR
 Depends: 
     R (>= 2.10)
 RoxygenNote: 6.0.1
