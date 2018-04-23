@@ -8,6 +8,8 @@ binning(x, ...)
 }
 \arguments{
 \item{x}{A variable to binning.}
+
+\item{...}{Additional arguments for the binning process.}
 }
 \description{
 Automatic supervised binning

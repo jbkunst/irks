@@ -5,7 +5,7 @@
 irks
 ====
 
-The goal of irks is to ...
+Is a set of tools for credit risk modelling.
 
 Installation
 ------------
@@ -34,20 +34,20 @@ var_importance(rf)
 #> # A tibble: 4 x 2
 #>   variable     importance
 #>   <chr>             <dbl>
-#> 1 Petal.Length      43.7 
-#> 2 Petal.Width       42.6 
+#> 1 Petal.Width       43.9 
+#> 2 Petal.Length      42.6 
 #> 3 Sepal.Length      10.3 
-#> 4 Sepal.Width        2.61
+#> 4 Sepal.Width        2.43
 
 rrf <- RRF::RRF(Species ~ ., data = iris)
 var_importance(rrf)
 #> # A tibble: 4 x 2
 #>   variable     importance
 #>   <chr>             <dbl>
-#> 1 Petal.Width       50.7 
-#> 2 Petal.Length      46.0 
+#> 1 Petal.Width       50.0 
+#> 2 Petal.Length      46.8 
 #> 3 Sepal.Width        1.37
-#> 4 Sepal.Length       1.23
+#> 4 Sepal.Length       1.02
 
 
 suppressMessages(library(partykit))

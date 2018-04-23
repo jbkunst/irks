@@ -14,3 +14,10 @@ bivariate_table(x, target)
 \description{
 Calculate bivariate table from a vector and a response variable
 }
+\examples{
+
+data(german_credit)
+
+bivariate_table(german_credit$personal_status_and_sex, german_credit$good_bad)
+
+}

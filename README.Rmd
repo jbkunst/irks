@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 # irks
 
-The goal of irks is to ...
+Is a set of tools for credit risk modelling.
 
 ## Installation
 

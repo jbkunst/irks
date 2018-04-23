@@ -4,7 +4,8 @@
 \alias{scorecard}
 \title{Creating a scorecard from logistic model}
 \usage{
-scorecard(model, pdo = 50:1, score0 = 600, pdo0 = 20)
+scorecard(model, pdo = 20, score0 = 600, pdo0 = 50/1,
+  turn.orientation = FALSE)
 }
 \arguments{
 \item{model}{A glm logistic model}
@@ -13,7 +14,9 @@ scorecard(model, pdo = 50:1, score0 = 600, pdo0 = 20)
 
 \item{score0}{default 600}
 
-\item{pdo0}{default to 20}
+\item{pdo0}{default to 50/1}
+
+\item{turn.orientation}{change the orientation of the scorecard points}
 }
 \description{
 The defaults are given by de Siddiqi example.

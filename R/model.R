@@ -25,6 +25,7 @@ model_summary <- function(model) {
 
   dmod <- model$data %>%
     dplyr::select_(.dots = c(response, variables)) %>%
+    dplyr::mutate_if(is.factor, as.character) %>%
     tidyr::gather("key", "value", variables) %>%
     dplyr::group_by(key, value) %>%
     dplyr::summarise_(
@@ -60,10 +61,10 @@ model_summary <- function(model) {
     tidyr::unite(term, variable, category, sep = "") %>%
     dplyr::pull()
 
-
   dmod <- dmod %>%
     dplyr::mutate(t2 = factor(term, levels = lvls)) %>%
-    dplyr::arrange(t2)
+    dplyr::arrange(t2) %>%
+    dplyr::select(-t2)
 
   dmod
 }
@@ -75,9 +76,39 @@ model_summary <- function(model) {
 #' @param model A glm logistic model
 #' @param pdo default 20
 #' @param score0 default 600
-#' @param pdo0 default to 20
+#' @param pdo0 default to 50/1
+#' @param turn.orientation change the orientation of the scorecard points
 #' @export
-scorecard <- function(model, pdo = 50:1, score0 = 600, pdo0 = 20) {
+scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientation = FALSE) {
+
+  # model <- readRDS("D:/Docs/modelo-behavior/data/23/05_modelo.rds")
+  # pdo <- 20; score0 <- 600; pdo0 <- 50;  turn.orientation = TRUE
+
+  if(turn.orientation) {
+
+    fmla <- as.formula(model)
+
+    response <- as.character(fmla)[2]
+
+    response_name <- stringi::stri_rand_strings(1, length = 10, pattern = "[A-Za-z]")
+
+    response <- model$data %>%
+      mutate_(response_name = response) %>%
+      pull(response_name)
+
+    if(is.numeric(response)) {
+      response <- 1 - response
+    } else {
+      response <- forcats::fct_rev(factor(response))
+    }
+
+    model$data[[response_name]] <- response
+
+    fmla2 <- as.formula(paste(response_name, " ~ ", as.character(fmla)[3]))
+
+    model <- glm(fmla2, data = model$data, family = binomial(link = logit))
+
+  }
 
   mod <- model_summary(model)
 
@@ -97,6 +128,20 @@ scorecard <- function(model, pdo = 50:1, score0 = 600, pdo0 = 20) {
       )
 
   modscorecard
+
+}
+
+model_check <- function(model) {
+  TRUE
+}
+
+model_check_significant_coefficients <- function(model, sig.level = 0.1) {
+
+  modelo %>%
+    broom::tidy() %>%
+    dplyr::filter(term != "(Intercept)") %>%
+    dplyr::filter(p.value >= sig.level) %>%
+    nrow() == 0
 
 }
 
