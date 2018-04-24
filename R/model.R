@@ -3,12 +3,21 @@
 #' @examples
 #'
 #' data("german_credit")
-#' model <- step(glm(good_bad ~ ., data = german_credit, family = binomial))
 #'
+#' model <- glm(
+#'   good_bad ~ purpose + present_employment_since + credit_history,
+#'   data = german_credit, family = binomial
+#'   )
+#'
+#' model_summary(model)
+#'
+#' @importFrom dplyr n
+#' @importFrom rlang "!!" "!!!" sym syms
 #' @export
 model_summary <- function(model) {
 
-  # model <- modelo
+  # model <- readRDS("D:/Docs/modelo-behavior/data/23/05_modelo.rds")
+  # model_summary(model)
 
   response <- model %>%
     stats::as.formula() %>%
@@ -27,12 +36,12 @@ model_summary <- function(model) {
     dplyr::select_(.dots = c(response, variables)) %>%
     dplyr::mutate_if(is.factor, as.character) %>%
     tidyr::gather("key", "value", variables) %>%
-    dplyr::group_by(key, value) %>%
-    dplyr::summarise_(
-      p = "n()",
-      target_rate = sprintf("mean(%s)", response)
+    dplyr::group_by(!!!syms(c("key", "value"))) %>%
+    dplyr::summarise(
+      p = n(),
+      target_rate = mean(!!sym(response))
       ) %>%
-    dplyr::group_by(key) %>%
+    dplyr::group_by(!!sym("key")) %>%
     dplyr::mutate(p = p/sum(p)) %>%
     dplyr::ungroup() %>%
     dplyr::mutate(
@@ -58,13 +67,13 @@ model_summary <- function(model) {
   ) %>%
     purrr::reduce(dplyr::bind_rows) %>%
     dplyr::bind_rows(dplyr::data_frame(variable = "(Intercept)")) %>%
-    tidyr::unite(term, variable, category, sep = "") %>%
+    tidyr::unite(!!sym("term"), !!sym("variable"), !!sym("category"), sep = "") %>%
     dplyr::pull()
 
   dmod <- dmod %>%
-    dplyr::mutate(t2 = factor(term, levels = lvls)) %>%
-    dplyr::arrange(t2) %>%
-    dplyr::select(-t2)
+    dplyr::mutate(t2 = factor(!!sym("term"), levels = lvls)) %>%
+    dplyr::arrange(!!sym("t2")) %>%
+    dplyr::select(-!!sym("t2"))
 
   dmod
 }
@@ -78,6 +87,18 @@ model_summary <- function(model) {
 #' @param score0 default 600
 #' @param pdo0 default to 50/1
 #' @param turn.orientation change the orientation of the scorecard points
+#'
+#' @examples
+#'
+#' data("german_credit")
+#'
+#' model <- glm(
+#'   good_bad ~ purpose + present_employment_since + credit_history,
+#'   data = german_credit, family = binomial
+#'   )
+#'
+#' scorecard(model)
+#'
 #' @importFrom stats binomial glm predict
 #' @export
 scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientation = FALSE) {
@@ -122,7 +143,7 @@ scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientati
   pb <- (score0 + a * b0) / k
 
   modscorecard <- mod %>%
-    dplyr::select_(.dots = c("term", "estimate")) %>%
+    dplyr::select(term, estimate) %>%
     dplyr::mutate_(
       "score" = "as.integer(floor(a * ifelse(is.na(estimate), 0, estimate) + pb))"
       )

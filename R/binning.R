@@ -25,6 +25,7 @@ binning.default <- function(x, ...) {
 #' @examples
 #'
 #' data(german_credit)
+#'
 #' binning(german_credit$duration_in_month, german_credit$good_bad)
 #' binning(german_credit$credit_amount, german_credit$good_bad)
 #'
@@ -155,6 +156,13 @@ apply_binning <- function(bin, x) {
 #' Generic method to plot a binnig object
 #' @param x A binning object.
 #' @param ... Extra arguments.
+#' @examples
+#'
+#' data(german_credit)
+#' bn <- binning(german_credit$duration_in_month, german_credit$good_bad)
+#'
+#' plot(bn)
+#'
 #' @export
 plot.binning <- function(x, ...) {
 

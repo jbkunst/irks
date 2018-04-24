@@ -6,7 +6,12 @@
 #'
 #' data(german_credit)
 #'
-#' bivariate_table(german_credit$personal_status_and_sex, german_credit$good_bad)
+#' bivariate_table(german_credit$purpose, german_credit$good_bad)
+#'
+#' bivariate_table(
+#'   cut(german_credit$duration_in_month, c(0, 6, 12, 24, 36, Inf)),
+#'   german_credit$good_bad
+#' )
 #'
 #' @export
 bivariate_table <- function(x, target){
@@ -14,8 +19,8 @@ bivariate_table <- function(x, target){
   tot_target <- sum(target)
   tot_non_target <- length(target) - tot_target
 
-  bt <- dplyr::data_frame(x = x, target) %>%
-    dplyr::group_by(x) %>%
+  bt <- dplyr::data_frame(x, target) %>%
+    dplyr::group_by(!!sym("x")) %>%
     dplyr::summarise(
       n = length(target),
       percent = n/nrow(.),

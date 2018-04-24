@@ -2,11 +2,15 @@ Package: irks
 Type: Package
 Title: Tools for credit risk modelling
 Version: 0.2.0
-Author: Joshua Kunst
+Authors@R: c(
+    person("Joshua", "Kunst", ,"jbkunst@gmail.com", role = c("aut", "cre"))
+    )
 Maintainer: Joshua Kunst <jbkunst@gmail.com>
 Description: A set of functions to help the development, implementation and
     monitoring scorecards.
 License: MIT + file LICENSE
+URL: https://github.com/jbkunst/irks/
+BugReports: https://github.com/jbkunst/irks/issues
 Encoding: UTF-8
 LazyData: true
 Imports:
@@ -24,7 +28,8 @@ Imports:
   randomForest,
   RRF,
   ROCR,
-  ggplot2
+  ggplot2,
+  rlang
 Depends: 
     R (>= 2.10)
 RoxygenNote: 6.0.1

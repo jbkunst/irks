@@ -26,6 +26,7 @@ Grouping or binning for numeric variables
 \examples{
 
 data(german_credit)
+
 binning(german_credit$duration_in_month, german_credit$good_bad)
 binning(german_credit$credit_amount, german_credit$good_bad)
 

@@ -18,6 +18,11 @@ Calculate bivariate table from a vector and a response variable
 
 data(german_credit)
 
-bivariate_table(german_credit$personal_status_and_sex, german_credit$good_bad)
+bivariate_table(german_credit$purpose, german_credit$good_bad)
+
+bivariate_table(
+  cut(german_credit$duration_in_month, c(0, 6, 12, 24, 36, Inf)),
+  german_credit$good_bad
+)
 
 }

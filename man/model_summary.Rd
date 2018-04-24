@@ -15,6 +15,12 @@ Get a summary of the logistic glm model considering reference levels
 \examples{
 
 data("german_credit")
-model <- step(glm(good_bad ~ ., data = german_credit, family = binomial))
+
+model <- glm(
+  good_bad ~ purpose + present_employment_since + credit_history,
+  data = german_credit, family = binomial
+  )
+
+model_summary(model)
 
 }

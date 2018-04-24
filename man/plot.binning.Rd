@@ -14,3 +14,11 @@
 \description{
 Generic method to plot a binnig object
 }
+\examples{
+
+data(german_credit)
+bn <- binning(german_credit$duration_in_month, german_credit$good_bad)
+
+plot(bn)
+
+}

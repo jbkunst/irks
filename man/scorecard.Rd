@@ -21,3 +21,15 @@ scorecard(model, pdo = 20, score0 = 600, pdo0 = 50/1,
 \description{
 The defaults are given by de Siddiqi example.
 }
+\examples{
+
+data("german_credit")
+
+model <- glm(
+  good_bad ~ purpose + present_employment_since + credit_history,
+  data = german_credit, family = binomial
+  )
+
+scorecard(model)
+
+}
