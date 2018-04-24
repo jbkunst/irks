@@ -78,6 +78,7 @@ model_summary <- function(model) {
 #' @param score0 default 600
 #' @param pdo0 default to 50/1
 #' @param turn.orientation change the orientation of the scorecard points
+#' @importFrom stats binomial glm predict
 #' @export
 scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientation = FALSE) {
 
@@ -93,8 +94,8 @@ scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientati
     response_name <- stringi::stri_rand_strings(1, length = 10, pattern = "[A-Za-z]")
 
     response <- model$data %>%
-      mutate_(response_name = response) %>%
-      pull(response_name)
+      dplyr::mutate_(response_name = response) %>%
+      dplyr::pull(response_name)
 
     if(is.numeric(response)) {
       response <- 1 - response
@@ -121,10 +122,9 @@ scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientati
   pb <- (score0 + a * b0) / k
 
   modscorecard <- mod %>%
-    dplyr::select(term, estimate) %>%
-    dplyr::mutate(
-      score = floor(a * ifelse(is.na(estimate), 0, estimate) + pb),
-      score = as.integer(score)
+    dplyr::select_(.dots = c("term", "estimate")) %>%
+    dplyr::mutate_(
+      "score" = "as.integer(floor(a * ifelse(is.na(estimate), 0, estimate) + pb))"
       )
 
   modscorecard

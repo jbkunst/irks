@@ -15,12 +15,17 @@ binning.default <- function(x, ...) {
        " are not supported by binning (yet).", call. = FALSE)
 }
 
+#' Grouping or binning for numeric variables
+#' @param x A variable to binning.
+#' @param y A binary variable same length as \code{score}.
+#' @param min.p Minimal proportion in a group (a ctree_control argument).
+#' @param alpha Minimal critetion (a ctree_control argument).
+#' @param na_level String for determinar de NA level.
+#' @param ... Extra arguments to \code{ctree_control}.
 #' @examples
 #'
 #' data(german_credit)
-#'
 #' binning(german_credit$duration_in_month, german_credit$good_bad)
-#'
 #' binning(german_credit$credit_amount, german_credit$good_bad)
 #'
 #' @export
@@ -65,9 +70,9 @@ binning.numeric <- function(x, y, min.p = 0.1, alpha = 0.05, na_level = "(Missin
 
   if(consider_na) {
 
-    lvls <- levels(pull(dft, xcat))
+    lvls <- levels(dplyr::pull(dft, xcat))
     lvls[1] <- na_level
-    lvls[2] <- sprintf("(-Inf,%s]", pull(dftg, max)[2])
+    lvls[2] <- sprintf("(-Inf,%s]", dplyr::pull(dftg, max)[2])
     levels(dft$xcat) <- lvls
 
     brks <- setdiff(brks, m2)
@@ -101,10 +106,13 @@ binning.numeric <- function(x, y, min.p = 0.1, alpha = 0.05, na_level = "(Missin
 
 }
 
-# @param x A variable to binning.
-# @param y A binary variable same length as \code{score}.
-# @param min.p Minimal proportion in a group (a ctree_control argument).
-# @param min.cri Minimal critetion (a ctree_control argument).
+#' Grouping or binning character/factors variables
+#' @param x A variable to binning.
+#' @param y A binary variable same length as \code{score}.
+#' @param min.p Minimal proportion in a group (a ctree_control argument).
+#' @param alpha Minimal critetion (a ctree_control argument).
+#' @param na_level String for determinar de NA level.
+#' @param ... Extra arguments to \code{ctree_control}.
 #' @export
 binning.character <- function(x, y, min.p = 0.2, alpha = 0.05, na_level = "(Missing)", ...) {
 
@@ -145,9 +153,10 @@ apply_binning <- function(bin, x) {
 }
 
 #' Generic method to plot a binnig object
-#'
+#' @param x A binning object.
+#' @param ... Extra arguments.
 #' @export
-plot.binning <- function(x) {
+plot.binning <- function(x, ...) {
 
   # x <- readRDS("D:/Docs/modelo-behavior/data/23/06_gghh.rds")
 

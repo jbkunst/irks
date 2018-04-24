@@ -4,7 +4,12 @@
 \alias{plot.binning}
 \title{Generic method to plot a binnig object}
 \usage{
-\method{plot}{binning}(x)
+\method{plot}{binning}(x, ...)
+}
+\arguments{
+\item{x}{A binning object.}
+
+\item{...}{Extra arguments.}
 }
 \description{
 Generic method to plot a binnig object

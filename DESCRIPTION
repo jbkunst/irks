@@ -18,11 +18,13 @@ Imports:
   purrr,
   forcats,
   stringr,
+  stringi,
   broom,
   partykit,
   randomForest,
   RRF,
-  ROCR
+  ROCR,
+  ggplot2
 Depends: 
     R (>= 2.10)
 RoxygenNote: 6.0.1
