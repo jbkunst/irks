@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -131,16 +131,16 @@
 <span class='fu'>bivariate_table</span>(<span class='no'>german_credit</span>$<span class='no'>purpose</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)</div><div class='output co'>#&gt; # A tibble: 10 x 11
 #&gt;    x                 n percent target_n target_rate target_percent non_target_n
 #&gt;    &lt;chr&gt;         &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
-#&gt;  1 business         97 0.0970       63.       0.649         0.0900          34.
-#&gt;  2 car_new         234 0.234       145.       0.620         0.207           89.
-#&gt;  3 car_used        103 0.103        86.       0.835         0.123           17.
-#&gt;  4 domestic_app~    12 0.0120        8.       0.667         0.0114           4.
-#&gt;  5 education        50 0.0500       28.       0.560         0.0400          22.
-#&gt;  6 furniture_or~   181 0.181       123.       0.680         0.176           58.
-#&gt;  7 others           12 0.0120        7.       0.583         0.0100           5.
-#&gt;  8 radio_or_tel~   280 0.280       218.       0.779         0.311           62.
-#&gt;  9 repairs          22 0.0220       14.       0.636         0.0200           8.
-#&gt; 10 retraining        9 0.00900       8.       0.889         0.0114           1.
+#&gt;  1 business         97 0.0970     63.0        0.649         0.0900        34.0 
+#&gt;  2 car_new         234 0.234     145          0.620         0.207         89.0 
+#&gt;  3 car_used        103 0.103      86.0        0.835         0.123         17.0 
+#&gt;  4 domestic_app~    12 0.0120      8.00       0.667         0.0114         4.00
+#&gt;  5 education        50 0.0500     28.0        0.560         0.0400        22.0 
+#&gt;  6 furniture_or~   181 0.181     123          0.680         0.176         58.0 
+#&gt;  7 others           12 0.0120      7.00       0.583         0.0100         5.00
+#&gt;  8 radio_or_tel~   280 0.280     218          0.779         0.311         62.0 
+#&gt;  9 repairs          22 0.0220     14.0        0.636         0.0200         8.00
+#&gt; 10 retraining        9 0.00900     8.00       0.889         0.0114         1.00
 #&gt; # ... with 4 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
 #&gt; #   iv &lt;dbl&gt;</div><div class='input'>
 <span class='fu'>bivariate_table</span>(
@@ -149,11 +149,11 @@
 )</div><div class='output co'>#&gt; # A tibble: 5 x 11
 #&gt;   x            n percent target_n target_rate target_percent non_target_n
 #&gt;   &lt;fct&gt;    &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
-#&gt; 1 (0,6]       82  0.0820      73.       0.890         0.104            9.
-#&gt; 2 (6,12]     277  0.277      210.       0.758         0.300           67.
-#&gt; 3 (12,24]    411  0.411      289.       0.703         0.413          122.
-#&gt; 4 (24,36]    143  0.143       86.       0.601         0.123           57.
-#&gt; 5 (36,Inf]    87  0.0870      42.       0.483         0.0600          45.
+#&gt; 1 (0,6]       82  0.0820     73.0       0.890         0.104          9.00
+#&gt; 2 (6,12]     277  0.277     210         0.758         0.300         67.0 
+#&gt; 3 (12,24]    411  0.411     289         0.703         0.413        122   
+#&gt; 4 (24,36]    143  0.143      86.0       0.601         0.123         57.0 
+#&gt; 5 (36,Inf]    87  0.0870     42.0       0.483         0.0600        45.0 
 #&gt; # ... with 4 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
 #&gt; #   iv &lt;dbl&gt;</div><div class='input'>
 </div></pre>
