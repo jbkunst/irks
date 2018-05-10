@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Grouping or binning — binning • irks</title>
+<title>Generic method to print a binnig object — print.binning • irks</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Grouping or binning — binning" />
+<meta property="og:title" content="Generic method to print a binnig object — print.binning" />
 
-<meta property="og:description" content="Automatic supervised binning" />
+<meta property="og:description" content="Generic method to print a binnig object" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -97,59 +97,85 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Grouping or binning</h1>
+    <h1>Generic method to print a binnig object</h1>
     <small class="dont-index">Source: <a href='https://github.com/jbkunst/irks//blob/master/R/binning.R'><code>R/binning.R</code></a></small>
-    <div class="hidden name"><code>binning.Rd</code></div>
+    <div class="hidden name"><code>print.binning.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Automatic supervised binning</p>
+    <p>Generic method to print a binnig object</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>binning</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>p.min</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>na_level</span> <span class='kw'>=</span> <span class='st'>"(Missing)"</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for default</span>
-<span class='fu'>binning</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>p.min</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>na_level</span> <span class='kw'>=</span> <span class='st'>"(Missing)"</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for binning</span>
+<span class='fu'>print</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A variable to binning.</p></td>
-    </tr>
-    <tr>
-      <th>y</th>
-      <td><p>A binary variable same length as <code>score</code>.</p></td>
-    </tr>
-    <tr>
-      <th>p.min</th>
-      <td><p>Minimal proportion in a group (a ctree_control argument).</p></td>
-    </tr>
-    <tr>
-      <th>alpha</th>
-      <td><p>Minimal critetion (a ctree_control argument).</p></td>
-    </tr>
-    <tr>
-      <th>na_level</th>
-      <td><p>String for determinar de NA level.</p></td>
+      <td><p>A binning object.</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Additional arguments for the binning process.</p></td>
+      <td><p>Extra arguments.</p></td>
     </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='fu'>data</span>(<span class='no'>german_credit</span>)
+<span class='no'>bin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>german_credit</span>$<span class='no'>duration_in_month</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)
+<span class='no'>bin</span></div><div class='output co'>#&gt; binning object:
+#&gt; 
+#&gt; 	Information Value: 0.229   medium 
+#&gt; 	Herfindahl-Hirschman Index: 0.484   high concentration 
+#&gt; 	Number of categories: 3 
+#&gt; 
+#&gt; 	Summary table:
+#&gt; # A tibble: 3 x 13
+#&gt;   x             n percent target_n target_rate target_percent non_target_n
+#&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
+#&gt; 1 [-Inf,11]   180   0.180     153.       0.850          0.219          27.
+#&gt; 2 (11,33]     650   0.650     459.       0.706          0.656         191.
+#&gt; 3 (33, Inf]   170   0.170      88.       0.518          0.126          82.
+#&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
+#&gt; #   iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;
+#&gt; 
+#&gt; 	Object values: dict, summary, separate_missing, iv, hhi, monotonous, na_level, class</div><div class='input'>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>runif</span>(<span class='fl'>500</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>rbinom</span>(<span class='fl'>500</span>, <span class='fl'>1</span>, <span class='no'>x</span>)
+<span class='no'>bin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>.1</span>)
+<span class='no'>bin</span></div><div class='output co'>#&gt; binning object:
+#&gt; 
+#&gt; 	Information Value: 2.054   suspicious 
+#&gt; 	Herfindahl-Hirschman Index: 0.272   high concentration 
+#&gt; 	Number of categories: 4 
+#&gt; 
+#&gt; 	Summary table:
+#&gt; # A tibble: 4 x 13
+#&gt;   x                 n percent target_n target_rate target_percent non_target_n
+#&gt;   &lt;fct&gt;         &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;int&gt;
+#&gt; 1 [-Inf,0.33]     167   0.334       19       0.114         0.0776          148
+#&gt; 2 (0.33,0.454]     65   0.130       22       0.338         0.0898           43
+#&gt; 3 (0.454,0.741]   139   0.278       89       0.640         0.363            50
+#&gt; 4 (0.741, Inf]    129   0.258      115       0.891         0.469            14
+#&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
+#&gt; #   iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;
+#&gt; 
+#&gt; 	Object values: dict, summary, separate_missing, iv, hhi, monotonous, na_level, class</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

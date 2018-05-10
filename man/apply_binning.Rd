@@ -4,13 +4,36 @@
 \alias{apply_binning}
 \title{Apply binning}
 \usage{
-apply_binning(bin, x)
+apply_binning(bin, x, woe = FALSE)
 }
 \arguments{
-\item{bin}{A \code{binning} object}
+\item{bin}{A \code{binning} object.}
 
 \item{x}{A variable to bin.}
+
+\item{woe}{If the value is the woe instead of the categoric variable.}
 }
 \description{
 Apply binning
+}
+\examples{
+
+x <- runif(500)
+y <- rbinom(500, 1, x)
+bin <- binning(x, y)
+xnew <- runif(50)
+
+apply_binning(bin, xnew)
+apply_binning(bin, xnew, woe = TRUE)
+
+
+data(german_credit)
+x <- german_credit$purpose
+y <- german_credit$good_bad
+bin <- binning(x, y)
+xnew <- sample(x, 50)
+
+apply_binning(bin, xnew)
+apply_binning(bin, xnew, woe = TRUE)
+
 }

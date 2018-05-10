@@ -2,7 +2,6 @@
 #' @name irks
 #' @docType package
 #' @author Joshua Kunst (@@jbkunst)
-#' @importFrom stats as.formula
 NULL
 
 #' irks exported operators and S3 methods
@@ -18,4 +17,13 @@ NULL
 #' @name %>%
 #' @export
 #' @rdname irks-exports
+NULL
+
+#' irks imported operators and S3 methods
+#'
+#' @importFrom stats as.formula binomial glm predict prop.test median var
+#' @importFrom dplyr n everything
+#' @importFrom rlang "!!" "!!!" sym syms
+#' @importFrom utils txtProgressBar setTxtProgressBar
+#' @name irks-imports
 NULL

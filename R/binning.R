@@ -1,40 +1,50 @@
-#' Supervised binning
+#' Grouping or binning
 #'
 #' @description Automatic supervised binning
 #'
 #' @param x A variable to binning.
+#' @param y A binary variable same length as \code{score}.
+#' @param p.min Minimal proportion in a group (a ctree_control argument).
+#' @param alpha Minimal critetion (a ctree_control argument).
+#' @param na_level String for determinar de NA level.
 #' @param ... Additional arguments for the binning process.
 #' @export
-binning <- function(x, ...) {
+binning <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...) {
   UseMethod("binning")
 }
 
+# @param x A variable to binning.
+# @param y A binary variable same length as \code{score}.
+# @param p.min Minimal proportion in a group (a ctree_control argument).
+# @param alpha Minimal critetion (a ctree_control argument).
+# @param na_level String for determinar de NA level.
+# @param ... Additional arguments for the binning process.
+#' @rdname binning
 #' @export
-binning.default <- function(x, ...) {
-  stop("Objects of class/type ", paste(class(object), collapse = "/"),
+binning.default <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...) {
+  stop("Objects of class/type ", paste(class(x), collapse = "/"),
        " are not supported by binning (yet).", call. = FALSE)
 }
 
 #' Grouping or binning for numeric variables
 #' @param x A variable to binning.
 #' @param y A binary variable same length as \code{score}.
-#' @param min.p Minimal proportion in a group (a ctree_control argument).
+#' @param p.min Minimal proportion in a group (a ctree_control argument).
 #' @param alpha Minimal critetion (a ctree_control argument).
 #' @param na_level String for determinar de NA level.
 #' @param ... Extra arguments to \code{ctree_control}.
 #' @examples
 #'
 #' data(german_credit)
-#'
 #' binning(german_credit$duration_in_month, german_credit$good_bad)
 #' binning(german_credit$credit_amount, german_credit$good_bad)
 #'
 #' @export
-binning.numeric <- function(x, y, min.p = 0.1, alpha = 0.05, na_level = "(Missing)", ...){
+binning.numeric <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...){
 
   # y <- german_credit$good_bad
   # x <- german_credit$duration_in_month
-  # min.p = 0.05; alpha = 0.05
+  # p.min = 0.05; alpha = 0.05
 
   m <- min(x, na.rm = TRUE)
   m2 <- m - 9999
@@ -45,7 +55,7 @@ binning.numeric <- function(x, y, min.p = 0.1, alpha = 0.05, na_level = "(Missin
 
   extree_data <- utils::getFromNamespace("extree_data", "partykit")
 
-  mb <- ceiling(round(min.p * length(x)))
+  mb <- ceiling(round(p.min * length(x)))
   ct_control <- partykit::ctree_control(minbucket = mb, alpha = alpha, ...)
 
   t <- partykit::ctree(y ~ x, data = dplyr::data_frame(x, y), control = ct_control)
@@ -92,13 +102,14 @@ binning.numeric <- function(x, y, min.p = 0.1, alpha = 0.05, na_level = "(Missin
     { . == 1}
 
   out <- list(
-    breaks = brks,
+    dict = dplyr::data_frame(breaks = brks),
     summary = dfsumm,
     separate_missing = consider_na,
     iv = dfsumm %>% dplyr::summarise(sum(iv)) %>% dplyr::pull(),
     hhi = dfsumm %>% dplyr::summarise(sum(percent^2)) %>% dplyr::pull(),
     monotonous = monotonous,
-    na_level = na_level
+    na_level = na_level,
+    class = class(x)
   )
 
   class(out) <- "binning"
@@ -110,42 +121,160 @@ binning.numeric <- function(x, y, min.p = 0.1, alpha = 0.05, na_level = "(Missin
 #' Grouping or binning character/factors variables
 #' @param x A variable to binning.
 #' @param y A binary variable same length as \code{score}.
-#' @param min.p Minimal proportion in a group (a ctree_control argument).
+#' @param p.min Minimal proportion in a group (a ctree_control argument).
 #' @param alpha Minimal critetion (a ctree_control argument).
 #' @param na_level String for determinar de NA level.
 #' @param ... Extra arguments to \code{ctree_control}.
+#'
+#' data(german_credit)
+#' binning(german_credit$purpose, german_credit$good_bad)
+#'
 #' @export
-binning.character <- function(x, y, min.p = 0.2, alpha = 0.05, na_level = "(Missing)", ...) {
+binning.character <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...) {
 
-  mb <- ceiling(round(min.p * length(x)))
-  ct_control <- partykit::ctree_control(minbucket = mb, mincriterion = min.cri)
+  # x <- german_credit$purpose
+  # y <- german_credit$good_bad
 
-  t <- partykit::ctree(y ~ x, data = dplyr::data_frame(x, y), control = ct_control)
+  extree_data <- utils::getFromNamespace("extree_data", "partykit")
+
+  mb <- ceiling(round(p.min * length(x)))
+  ct_control <- partykit::ctree_control(minbucket = mb, alpha = alpha, ...)
+
+  xf <- fix_char_factor(x)
+
+  t <- partykit::ctree(y ~ x, data = dplyr::data_frame(x = xf, y), control = ct_control)
   # plot(t)
   t
+
+  dft <- dplyr::data_frame(
+    x, xf, y, xnode = predict(t, type = "node")
+  )
+
+  nr <- dft %>%
+    dplyr::distinct(xnode) %>%
+    nrow() %>%
+    as.character() %>%
+    nchar()
+
+  dftg <- dft %>%
+    dplyr::mutate(
+      xnodef = as.factor(xnode),
+      xnodef = forcats::fct_reorder(xnodef, y, fun = mean)
+      ) %>%
+    dplyr::distinct(x, xnode, xnodef) %>%
+    dplyr::arrange(xnodef) %>%
+    dplyr::mutate(
+      idx = dplyr::group_indices(., xnodef),
+      group = stringr::str_pad(idx, width = nr, side = "left", pad = "0"),
+      group = paste0("g_", group),
+      group = forcats::fct_inorder(group)
+      ) %>%
+    dplyr::select(x, group)
+
+  dft <- dplyr::left_join(dft, dftg, by = "x")
+
+  dfsumm <- bivariate_table(dft[["group"]], dft[["y"]])
+
+  out <- list(
+    dict = dftg,
+    summary = dfsumm,
+    separate_missing = NA,
+    iv = dfsumm %>% dplyr::summarise(sum(iv)) %>% dplyr::pull(),
+    hhi = dfsumm %>% dplyr::summarise(sum(percent^2)) %>% dplyr::pull(),
+    monotonous = NA,
+    na_level = na_level,
+    class = class(x)
+  )
+
+  class(out) <- "binning"
+
+  out
+
+}
+
+fix_char_factor <- function(x, na_level = "(Missing)", other_level = "Other") {
+
+  xf <- as.factor(x)
+  xf <- forcats::fct_explicit_na(x, na_level = na_level)
+
+  if(!is.ordered(xf)) {
+    xf <- forcats::fct_lump(xf, n = 30, other_level = other_level)
+  }
+
+  xf
+}
+
+#' @export
+binning.factor <- function(x, ...) {
+
+  binning.character(x, ...)
 
 }
 
 #' Apply binning
-#' @param bin A \code{binning} object
+#' @param bin A \code{binning} object.
 #' @param x A variable to bin.
+#' @param woe If the value is the woe instead of the categoric variable.
+#' @examples
+#'
+#' x <- runif(500)
+#' y <- rbinom(500, 1, x)
+#' bin <- binning(x, y)
+#' xnew <- runif(50)
+#'
+#' apply_binning(bin, xnew)
+#' apply_binning(bin, xnew, woe = TRUE)
+#'
+#'
+#' data(german_credit)
+#' x <- german_credit$purpose
+#' y <- german_credit$good_bad
+#' bin <- binning(x, y)
+#' xnew <- sample(x, 50)
+#'
+#' apply_binning(bin, xnew)
+#' apply_binning(bin, xnew, woe = TRUE)
+#'
 #' @export
-apply_binning <- function(bin, x) {
+apply_binning <- function(bin, x, woe = FALSE) {
 
-  brks <- bin$breaks
-  separate_missing <- bin$separate_missing
+  stopifnot(class(bin) %in% "binning")
+  stopifnot(bin$class == class(x))
 
-  if(!separate_missing) {
+  if(class(x) %in% c("integer", "numeric")) {
 
-    missing_val <- brks[2] - 1
-    x <- ifelse(is.na(x), missing_val, x)
+    brks <- bin$dict$breaks
+    separate_missing <- bin$separate_missing
 
-    xnew <- cut(x, breaks = brks, include.lowest = TRUE)
+    if(!separate_missing) {
 
-  } else {
+      missing_val <- brks[2] - 1
+      x <- ifelse(is.na(x), missing_val, x)
 
-    xnew <- cut(x, breaks = brks, include.lowest = TRUE)
-    xnew <- forcats::fct_explicit_na(xnew, na_level = bin$na_level)
+      xnew <- cut(x, breaks = brks, include.lowest = TRUE)
+
+    } else {
+
+      xnew <- cut(x, breaks = brks, include.lowest = TRUE)
+      xnew <- forcats::fct_explicit_na(xnew, na_level = bin$na_level)
+
+    }
+
+  }
+
+  if(class(x) %in% c("character", "factor")){
+
+    xnew <- data.frame(x, stringsAsFactors = FALSE) %>%
+      dplyr::left_join(bin$dict) %>%
+      dplyr::pull("group")
+
+  }
+
+  if(woe) {
+
+    xnew <- data.frame(xnew) %>%
+      dplyr::left_join(bin$summary, by = c("xnew" = "x")) %>%
+      dplyr::pull(woe)
 
   }
 
@@ -159,18 +288,66 @@ apply_binning <- function(bin, x) {
 #' @examples
 #'
 #' data(german_credit)
-#' bn <- binning(german_credit$duration_in_month, german_credit$good_bad)
+#' bin <- binning(german_credit$duration_in_month, german_credit$good_bad)
+#' plot(bin)
 #'
-#' plot(bn)
+#' x <- runif(250)
+#' y <- rbinom(250, 1, x)
+#' bin <- binning(x, y)
+#' plot(bin)
 #'
 #' @export
 plot.binning <- function(x, ...) {
 
   # x <- readRDS("D:/Docs/modelo-behavior/data/23/06_gghh.rds")
+  # x <- bin
 
-  ggplot2::ggplot(x[["summary"]]) +
-    ggplot2::geom_col(ggplot2::aes_string("x", "percent")) +
-    ggplot2::geom_line(ggplot2::aes_string("x", "target_rate"), group = 1)
-
+  ggplot2::ggplot(x[["summary"]], ggplot2::aes_string("x")) +
+    ggplot2::geom_col(ggplot2::aes_string(y = "percent"), width = 0.5) +
+    ggplot2::geom_errorbar(ggplot2::aes_string(ymin = "lower", ymax = "upper"), group = 1, width = 0.1) +
+    ggplot2::geom_line(ggplot2::aes_string(y = "target_rate"), group = 1) +
+    ggplot2::geom_point(ggplot2::aes_string(y = "target_rate"), group = 1) +
+    ggplot2::scale_y_continuous(labels = scales::percent) +
+    ggplot2::labs(x = NULL, y = NULL)
 }
 
+#' Generic method to print a binnig object
+#' @param x A binning object.
+#' @param ... Extra arguments.
+#' @examples
+#'
+#' data(german_credit)
+#' bin <- binning(german_credit$duration_in_month, german_credit$good_bad)
+#' bin
+#'
+#' x <- runif(500)
+#' y <- rbinom(500, 1, x)
+#' bin <- binning(x, y, alpha = .1)
+#' bin
+#'
+#' @export
+print.binning <- function(x, ...) {
+
+  # x <- readRDS("D:/Docs/modelo-behavior/data/23/06_gghh.rds")
+  # x <- bin
+
+  cat("binning object:\n\n")
+
+  cat("\tInformation Value: ")
+  cat(round(x$iv, 3)," ", as.character(label_iv(x$iv)), "\n")
+
+  cat("\tHerfindahl-Hirschman Index: ")
+  cat(round(x$hhi, 3)," ", as.character(label_hhi(x$hhi)), "\n")
+
+  cat("\tNumber of categories:", nrow(x$summary), "\n")
+
+  cat("\n\tSummary table:\n")
+  print(x$summary)
+
+  cat("\n")
+
+  cat("\tObject values:", paste(names(x), collapse = ", "))
+
+  invisible(x)
+
+}

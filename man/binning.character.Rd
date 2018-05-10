@@ -4,7 +4,7 @@
 \alias{binning.character}
 \title{Grouping or binning character/factors variables}
 \usage{
-\method{binning}{character}(x, y, min.p = 0.2, alpha = 0.05,
+\method{binning}{character}(x, y, p.min = 0.1, alpha = 0.05,
   na_level = "(Missing)", ...)
 }
 \arguments{
@@ -12,13 +12,16 @@
 
 \item{y}{A binary variable same length as \code{score}.}
 
-\item{min.p}{Minimal proportion in a group (a ctree_control argument).}
+\item{p.min}{Minimal proportion in a group (a ctree_control argument).}
 
 \item{alpha}{Minimal critetion (a ctree_control argument).}
 
 \item{na_level}{String for determinar de NA level.}
 
-\item{...}{Extra arguments to \code{ctree_control}.}
+\item{...}{Extra arguments to \code{ctree_control}.
+
+data(german_credit)
+binning(german_credit$purpose, german_credit$good_bad)}
 }
 \description{
 Grouping or binning character/factors variables

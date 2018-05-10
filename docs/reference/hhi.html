@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Functions To Develop Credit Risk Models — irks • irks</title>
+<title>Herfindahl-Hirschman Index — hhi • irks</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Functions To Develop Credit Risk Models — irks" />
+<meta property="og:title" content="Herfindahl-Hirschman Index — hhi" />
 
-<meta property="og:description" content="Functions To Develop Credit Risk Models" />
+<meta property="og:description" content="Herfindahl-Hirschman Index" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -97,28 +97,44 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Functions To Develop Credit Risk Models</h1>
-    <small class="dont-index">Source: <a href='https://github.com/jbkunst/irks//blob/master/R/irks-package.R'><code>R/irks-package.R</code></a></small>
-    <div class="hidden name"><code>irks.Rd</code></div>
+    <h1>Herfindahl-Hirschman Index</h1>
+    <small class="dont-index">Source: <a href='https://github.com/jbkunst/irks//blob/master/R/describe.R'><code>R/describe.R</code></a></small>
+    <div class="hidden name"><code>hhi.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Functions To Develop Credit Risk Models</p>
+    <p>Herfindahl-Hirschman Index</p>
     
     </div>
 
-        
+    <pre class="usage"><span class='fu'>hhi</span>(<span class='no'>x</span>)</pre>
+    
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>A vector to obtain the HHI.</p></td>
+    </tr>
+    </table>
+    
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span>(<span class='no'>LETTERS</span>[<span class='fl'>1</span>:<span class='fl'>10</span>], <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fu'>sqrt</span>(<span class='fl'>1</span>:<span class='fl'>10</span>))
+<span class='fu'>hhi</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] 0.110916</div><div class='input'><span class='fu'>plot</span>(<span class='fu'>table</span>(<span class='no'>x</span>))</div><div class='img'><img src='hhi-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span>(<span class='no'>LETTERS</span>[<span class='fl'>1</span>:<span class='fl'>5</span>], <span class='kw'>size</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>prob</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>5</span>)
+<span class='fu'>hhi</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] 0.248294</div><div class='input'><span class='fu'>plot</span>(<span class='fu'>table</span>(<span class='no'>x</span>))</div><div class='img'><img src='hhi-2.png' alt='' width='700' height='433' /></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-                </ul>
-
-    <h2>Author</h2>
-    
-Joshua Kunst (@jbkunst)
+      <li><a href="#arguments">Arguments</a></li>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

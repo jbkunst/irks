@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -108,7 +108,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>bivariate_table</span>(<span class='no'>x</span>, <span class='no'>target</span>)</pre>
+    <pre class="usage"><span class='fu'>bivariate_table</span>(<span class='no'>x</span>, <span class='no'>target</span>, <span class='kw'>add.prop.test</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>conf.level</span> <span class='kw'>=</span> <span class='fl'>0.95</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -121,6 +121,15 @@
       <th>target</th>
       <td><p>A binary variable same length as <code>x</code>.</p></td>
     </tr>
+    <tr>
+      <th>add.prop.test</th>
+      <td><p>Boolean to add or not the <code>prop.test</code> by
+categories.</p></td>
+    </tr>
+    <tr>
+      <th>conf.level</th>
+      <td><p>Confidence level of the returned confidence interval.</p></td>
+    </tr>
     </table>
     
 
@@ -128,7 +137,7 @@
     <pre class="examples"><div class='input'>
 <span class='fu'>data</span>(<span class='no'>german_credit</span>)
 
-<span class='fu'>bivariate_table</span>(<span class='no'>german_credit</span>$<span class='no'>purpose</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)</div><div class='output co'>#&gt; # A tibble: 10 x 11
+<span class='fu'>bivariate_table</span>(<span class='no'>german_credit</span>$<span class='no'>purpose</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Chi-squared approximation may be incorrect</span></div><div class='output co'>#&gt; # A tibble: 10 x 13
 #&gt;    x                 n percent target_n target_rate target_percent non_target_n
 #&gt;    &lt;chr&gt;         &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
 #&gt;  1 business         97 0.0970       63.       0.649         0.0900          34.
@@ -141,12 +150,13 @@
 #&gt;  8 radio_or_tel~   280 0.280       218.       0.779         0.311           62.
 #&gt;  9 repairs          22 0.0220       14.       0.636         0.0200           8.
 #&gt; 10 retraining        9 0.00900       8.       0.889         0.0114           1.
-#&gt; # ... with 4 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
-#&gt; #   iv &lt;dbl&gt;</div><div class='input'>
-<span class='fu'>bivariate_table</span>(
-  <span class='fu'>cut</span>(<span class='no'>german_credit</span>$<span class='no'>duration_in_month</span>, <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>6</span>, <span class='fl'>12</span>, <span class='fl'>24</span>, <span class='fl'>36</span>, <span class='fl'>Inf</span>)),
-  <span class='no'>german_credit</span>$<span class='no'>good_bad</span>
-)</div><div class='output co'>#&gt; # A tibble: 5 x 11
+#&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
+#&gt; #   iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;</div><div class='input'>
+
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>cut</span>(<span class='no'>german_credit</span>$<span class='no'>duration_in_month</span>, <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>6</span>, <span class='fl'>12</span>, <span class='fl'>24</span>, <span class='fl'>36</span>, <span class='fl'>Inf</span>))
+<span class='no'>target</span> <span class='kw'>&lt;-</span> <span class='no'>german_credit</span>$<span class='no'>good_bad</span>
+
+<span class='fu'>bivariate_table</span>(<span class='no'>x</span>, <span class='no'>target</span>)</div><div class='output co'>#&gt; # A tibble: 5 x 13
 #&gt;   x            n percent target_n target_rate target_percent non_target_n
 #&gt;   &lt;fct&gt;    &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
 #&gt; 1 (0,6]       82  0.0820      73.       0.890         0.104            9.
@@ -154,8 +164,8 @@
 #&gt; 3 (12,24]    411  0.411      289.       0.703         0.413          122.
 #&gt; 4 (24,36]    143  0.143       86.       0.601         0.123           57.
 #&gt; 5 (36,Inf]    87  0.0870      42.       0.483         0.0600          45.
-#&gt; # ... with 4 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
-#&gt; #   iv &lt;dbl&gt;</div><div class='input'>
+#&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
+#&gt; #   iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

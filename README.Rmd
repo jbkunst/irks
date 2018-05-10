@@ -15,6 +15,9 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+library(ggplot2)
+theme_set(jbkmisc::theme_jbk())
 ```
 
 [![Travis build status](https://travis-ci.org/jbkunst/irks.svg?branch=master)](https://travis-ci.org/jbkunst/irks)
@@ -28,28 +31,62 @@ Is a set of tools for credit risk modelling.
 
 You can install the released version of irks from [CRAN](https://CRAN.R-project.org) with:
 
-``` r
+```r
 install.packages("irks")
 ```
 
 And the development version from [GitHub](https://github.com/) with:
 
-``` r
+```r
 # install.packages("devtools")
 devtools::install_github("jbkunst/irks")
 ```
+
+## Descriptive
+
+```{r}
+library(irks)
+library(dplyr)
+data("german_credit")
+
+german_credit <- select(german_credit, good_bad, status_of_existing_checking_account,
+                        duration_in_month, savings_account_or_bonds, credit_amount,
+                        purpose, age_in_years)
+
+duni <- describe(german_credit)
+duni
+
+dbiv <- describe_bivariate(german_credit, target = good_bad, verbose = FALSE)
+
+arrange(dbiv, desc(iv))
+```
+
+
+## Binning
+
+```{r}
+x <- german_credit$duration_in_month
+y <- german_credit$good_bad
+
+bin <- binning(x, y)
+bin
+
+plot(bin)
+```
+
 
 ## Model helpers
 
 ### `var_importance`
 
 ```{r}
-rf <- randomForest::randomForest(Species ~ ., data = iris)
+german_credit <- mutate_if(german_credit, is.character, as.factor)
+
+rf <- randomForest::randomForest(factor(good_bad) ~ ., data = german_credit)
 var_importance(rf)
 
-rrf <- RRF::RRF(Species ~ ., data = iris)
+rrf <- RRF::RRF(factor(good_bad) ~ ., data = german_credit)
 var_importance(rrf)
-
 
 suppressMessages(library(partykit))
 ct <- ctree(Species ~ ., data = iris)

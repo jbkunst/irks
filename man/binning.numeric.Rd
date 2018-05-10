@@ -4,7 +4,7 @@
 \alias{binning.numeric}
 \title{Grouping or binning for numeric variables}
 \usage{
-\method{binning}{numeric}(x, y, min.p = 0.1, alpha = 0.05,
+\method{binning}{numeric}(x, y, p.min = 0.1, alpha = 0.05,
   na_level = "(Missing)", ...)
 }
 \arguments{
@@ -12,7 +12,7 @@
 
 \item{y}{A binary variable same length as \code{score}.}
 
-\item{min.p}{Minimal proportion in a group (a ctree_control argument).}
+\item{p.min}{Minimal proportion in a group (a ctree_control argument).}
 
 \item{alpha}{Minimal critetion (a ctree_control argument).}
 
@@ -26,7 +26,6 @@ Grouping or binning for numeric variables
 \examples{
 
 data(german_credit)
-
 binning(german_credit$duration_in_month, german_credit$good_bad)
 binning(german_credit$credit_amount, german_credit$good_bad)
 

@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -109,7 +109,7 @@
     </div>
 
     <pre class="usage"><span class='co'># S3 method for numeric</span>
-<span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>min.p</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+<span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>p.min</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
   <span class='kw'>na_level</span> <span class='kw'>=</span> <span class='st'>"(Missing)"</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -124,7 +124,7 @@
       <td><p>A binary variable same length as <code>score</code>.</p></td>
     </tr>
     <tr>
-      <th>min.p</th>
+      <th>p.min</th>
       <td><p>Minimal proportion in a group (a ctree_control argument).</p></td>
     </tr>
     <tr>
@@ -145,67 +145,40 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='fu'>data</span>(<span class='no'>german_credit</span>)
-
-<span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>german_credit</span>$<span class='no'>duration_in_month</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)</div><div class='output co'>#&gt; $breaks
-#&gt; [1] -Inf   11   33  Inf
+<span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>german_credit</span>$<span class='no'>duration_in_month</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)</div><div class='output co'>#&gt; binning object:
 #&gt; 
-#&gt; $summary
-#&gt; # A tibble: 3 x 11
+#&gt; 	Information Value: 0.229   medium 
+#&gt; 	Herfindahl-Hirschman Index: 0.484   high concentration 
+#&gt; 	Number of categories: 3 
+#&gt; 
+#&gt; 	Summary table:
+#&gt; # A tibble: 3 x 13
 #&gt;   x             n percent target_n target_rate target_percent non_target_n
 #&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
 #&gt; 1 [-Inf,11]   180   0.180     153.       0.850          0.219          27.
 #&gt; 2 (11,33]     650   0.650     459.       0.706          0.656         191.
 #&gt; 3 (33, Inf]   170   0.170      88.       0.518          0.126          82.
-#&gt; # ... with 4 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
-#&gt; #   iv &lt;dbl&gt;
+#&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
+#&gt; #   iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;
 #&gt; 
-#&gt; $separate_missing
-#&gt; [1] FALSE
+#&gt; 	Object values: dict, summary, separate_missing, iv, hhi, monotonous, na_level, class</div><div class='input'><span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>german_credit</span>$<span class='no'>credit_amount</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)</div><div class='output co'>#&gt; binning object:
 #&gt; 
-#&gt; $iv
-#&gt; [1] 0.2292961
+#&gt; 	Information Value: 0.175   medium 
+#&gt; 	Herfindahl-Hirschman Index: 0.335   high concentration 
+#&gt; 	Number of categories: 4 
 #&gt; 
-#&gt; $hhi
-#&gt; [1] 0.4838
-#&gt; 
-#&gt; $monotonous
-#&gt; [1] TRUE
-#&gt; 
-#&gt; $na_level
-#&gt; [1] "(Missing)"
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "binning"</div><div class='input'><span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>german_credit</span>$<span class='no'>credit_amount</span>, <span class='no'>german_credit</span>$<span class='no'>good_bad</span>)</div><div class='output co'>#&gt; $breaks
-#&gt; [1] -Inf 1372 3913 6742  Inf
-#&gt; 
-#&gt; $summary
-#&gt; # A tibble: 4 x 11
+#&gt; 	Summary table:
+#&gt; # A tibble: 4 x 13
 #&gt;   x                  n percent target_n target_rate target_percent non_target_n
 #&gt;   &lt;fct&gt;          &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;
 #&gt; 1 [-Inf,1.37e+0~   253   0.253     173.       0.684         0.247           80.
 #&gt; 2 (1.37e+03,3.9~   487   0.487     378.       0.776         0.540          109.
 #&gt; 3 (3.91e+03,6.7~   144   0.144      90.       0.625         0.129           54.
 #&gt; 4 (6.74e+03, In~   116   0.116      59.       0.509         0.0843          57.
-#&gt; # ... with 4 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
-#&gt; #   iv &lt;dbl&gt;
+#&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
+#&gt; #   iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;
 #&gt; 
-#&gt; $separate_missing
-#&gt; [1] FALSE
-#&gt; 
-#&gt; $iv
-#&gt; [1] 0.1747184
-#&gt; 
-#&gt; $hhi
-#&gt; [1] 0.33537
-#&gt; 
-#&gt; $monotonous
-#&gt; [1] FALSE
-#&gt; 
-#&gt; $na_level
-#&gt; [1] "(Missing)"
-#&gt; 
-#&gt; attr(,"class")
-#&gt; [1] "binning"</div><div class='input'>
+#&gt; 	Object values: dict, summary, separate_missing, iv, hhi, monotonous, na_level, class</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -2,12 +2,24 @@
 % Please edit documentation in R/binning.R
 \name{binning}
 \alias{binning}
-\title{Supervised binning}
+\alias{binning.default}
+\title{Grouping or binning}
 \usage{
-binning(x, ...)
+binning(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...)
+
+\method{binning}{default}(x, y, p.min = 0.1, alpha = 0.05,
+  na_level = "(Missing)", ...)
 }
 \arguments{
 \item{x}{A variable to binning.}
+
+\item{y}{A binary variable same length as \code{score}.}
+
+\item{p.min}{Minimal proportion in a group (a ctree_control argument).}
+
+\item{alpha}{Minimal critetion (a ctree_control argument).}
+
+\item{na_level}{String for determinar de NA level.}
 
 \item{...}{Additional arguments for the binning process.}
 }

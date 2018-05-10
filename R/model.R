@@ -11,8 +11,6 @@
 #'
 #' model_summary(model)
 #'
-#' @importFrom dplyr n
-#' @importFrom rlang "!!" "!!!" sym syms
 #' @export
 model_summary <- function(model) {
 
@@ -99,7 +97,6 @@ model_summary <- function(model) {
 #'
 #' scorecard(model)
 #'
-#' @importFrom stats binomial glm predict
 #' @export
 scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientation = FALSE) {
 
@@ -143,7 +140,7 @@ scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientati
   pb <- (score0 + a * b0) / k
 
   modscorecard <- mod %>%
-    dplyr::select(term, estimate) %>%
+    dplyr::select(!!!syms(c("term", "estimate"))) %>%
     dplyr::mutate_(
       "score" = "as.integer(floor(a * ifelse(is.na(estimate), 0, estimate) + pb))"
       )

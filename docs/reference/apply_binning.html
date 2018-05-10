@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -108,28 +108,80 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>apply_binning</span>(<span class='no'>bin</span>, <span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>apply_binning</span>(<span class='no'>bin</span>, <span class='no'>x</span>, <span class='kw'>woe</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>bin</th>
-      <td><p>A <code>binning</code> object</p></td>
+      <td><p>A <code>binning</code> object.</p></td>
     </tr>
     <tr>
       <th>x</th>
       <td><p>A variable to bin.</p></td>
     </tr>
+    <tr>
+      <th>woe</th>
+      <td><p>If the value is the woe instead of the categoric variable.</p></td>
+    </tr>
     </table>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'>
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>runif</span>(<span class='fl'>500</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>rbinom</span>(<span class='fl'>500</span>, <span class='fl'>1</span>, <span class='no'>x</span>)
+<span class='no'>bin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='no'>xnew</span> <span class='kw'>&lt;-</span> <span class='fu'>runif</span>(<span class='fl'>50</span>)
+
+<span class='fu'>apply_binning</span>(<span class='no'>bin</span>, <span class='no'>xnew</span>)</div><div class='output co'>#&gt;  [1] (0.204,0.439] (0.204,0.439] (0.439,0.773] (0.439,0.773] (0.439,0.773]
+#&gt;  [6] (0.439,0.773] (0.439,0.773] (0.204,0.439] [-Inf,0.204]  (0.204,0.439]
+#&gt; [11] (0.439,0.773] (0.439,0.773] (0.439,0.773] (0.439,0.773] (0.439,0.773]
+#&gt; [16] (0.204,0.439] (0.773, Inf]  (0.204,0.439] (0.773, Inf]  (0.773, Inf] 
+#&gt; [21] [-Inf,0.204]  (0.439,0.773] (0.773, Inf]  (0.773, Inf]  (0.204,0.439]
+#&gt; [26] (0.204,0.439] (0.204,0.439] (0.204,0.439] (0.204,0.439] (0.439,0.773]
+#&gt; [31] [-Inf,0.204]  (0.204,0.439] (0.773, Inf]  (0.439,0.773] (0.439,0.773]
+#&gt; [36] (0.773, Inf]  [-Inf,0.204]  (0.439,0.773] (0.773, Inf]  (0.439,0.773]
+#&gt; [41] (0.204,0.439] (0.773, Inf]  (0.204,0.439] [-Inf,0.204]  (0.439,0.773]
+#&gt; [46] (0.773, Inf]  (0.439,0.773] (0.439,0.773] (0.439,0.773] (0.204,0.439]
+#&gt; Levels: [-Inf,0.204] (0.204,0.439] (0.439,0.773] (0.773, Inf]</div><div class='input'><span class='fu'>apply_binning</span>(<span class='no'>bin</span>, <span class='no'>xnew</span>, <span class='kw'>woe</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt;  [1] -0.9010590 -0.9010590  0.4847544  0.4847544  0.4847544  0.4847544
+#&gt;  [7]  0.4847544 -0.9010590 -3.3806606 -0.9010590  0.4847544  0.4847544
+#&gt; [13]  0.4847544  0.4847544  0.4847544 -0.9010590  2.0381029 -0.9010590
+#&gt; [19]  2.0381029  2.0381029 -3.3806606  0.4847544  2.0381029  2.0381029
+#&gt; [25] -0.9010590 -0.9010590 -0.9010590 -0.9010590 -0.9010590  0.4847544
+#&gt; [31] -3.3806606 -0.9010590  2.0381029  0.4847544  0.4847544  2.0381029
+#&gt; [37] -3.3806606  0.4847544  2.0381029  0.4847544 -0.9010590  2.0381029
+#&gt; [43] -0.9010590 -3.3806606  0.4847544  2.0381029  0.4847544  0.4847544
+#&gt; [49]  0.4847544 -0.9010590</div><div class='input'>
+
+<span class='fu'>data</span>(<span class='no'>german_credit</span>)
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='no'>german_credit</span>$<span class='no'>purpose</span>
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='no'>german_credit</span>$<span class='no'>good_bad</span>
+<span class='no'>bin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>x</span>, <span class='no'>y</span>)
+<span class='no'>xnew</span> <span class='kw'>&lt;-</span> <span class='fu'>sample</span>(<span class='no'>x</span>, <span class='fl'>50</span>)
+
+<span class='fu'>apply_binning</span>(<span class='no'>bin</span>, <span class='no'>xnew</span>)</div><div class='output co'>#&gt; <span class='message'>Joining, by = "x"</span></div><div class='output co'>#&gt;  [1] g_1 g_1 g_2 g_2 g_1 g_2 g_1 g_1 g_2 g_2 g_1 g_1 g_1 g_2 g_2 g_1 g_1 g_2 g_1
+#&gt; [20] g_1 g_1 g_2 g_1 g_1 g_2 g_2 g_2 g_1 g_1 g_1 g_2 g_2 g_2 g_2 g_2 g_2 g_2 g_2
+#&gt; [39] g_1 g_2 g_1 g_1 g_1 g_2 g_2 g_2 g_1 g_2 g_1 g_2
+#&gt; Levels: g_1 g_2</div><div class='input'><span class='fu'>apply_binning</span>(<span class='no'>bin</span>, <span class='no'>xnew</span>, <span class='kw'>woe</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='message'>Joining, by = "x"</span></div><div class='output co'>#&gt;  [1] -0.2799201 -0.2799201  0.5136787  0.5136787 -0.2799201  0.5136787
+#&gt;  [7] -0.2799201 -0.2799201  0.5136787  0.5136787 -0.2799201 -0.2799201
+#&gt; [13] -0.2799201  0.5136787  0.5136787 -0.2799201 -0.2799201  0.5136787
+#&gt; [19] -0.2799201 -0.2799201 -0.2799201  0.5136787 -0.2799201 -0.2799201
+#&gt; [25]  0.5136787  0.5136787  0.5136787 -0.2799201 -0.2799201 -0.2799201
+#&gt; [31]  0.5136787  0.5136787  0.5136787  0.5136787  0.5136787  0.5136787
+#&gt; [37]  0.5136787  0.5136787 -0.2799201  0.5136787 -0.2799201 -0.2799201
+#&gt; [43] -0.2799201  0.5136787  0.5136787  0.5136787 -0.2799201  0.5136787
+#&gt; [49] -0.2799201  0.5136787</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+            
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

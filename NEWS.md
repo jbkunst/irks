@@ -1,7 +1,7 @@
 # irks 0.2.0
 
-* Added `binning`, `apply_binning`, `model_summary`, `scorecard`, `roc_data`
-functions.
+* Added `binning`, `apply_binning`, `model_summary`, `scorecard`, `roc_data`, 
+`describe`, `describe_bivariate`, `hhi` functions.
 
 
 # irks 0.1.0
