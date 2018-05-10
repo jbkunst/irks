@@ -151,18 +151,19 @@
 <span class='no'>bin</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='binning.html'>binning</a></span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>.1</span>)
 <span class='no'>bin</span></div><div class='output co'>#&gt; binning object:
 #&gt; 
-#&gt; 	Information Value: 2.054   suspicious 
-#&gt; 	Herfindahl-Hirschman Index: 0.272   high concentration 
-#&gt; 	Number of categories: 4 
+#&gt; 	Information Value: 1.361   suspicious 
+#&gt; 	Herfindahl-Hirschman Index: 0.231   moderate concentration 
+#&gt; 	Number of categories: 5 
 #&gt; 
 #&gt; 	Summary table:
-#&gt; # A tibble: 4 x 13
+#&gt; # A tibble: 5 x 13
 #&gt;   x                 n percent target_n target_rate target_percent non_target_n
 #&gt;   &lt;fct&gt;         &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;int&gt;
-#&gt; 1 [-Inf,0.33]     167   0.334       19       0.114         0.0776          148
-#&gt; 2 (0.33,0.454]     65   0.130       22       0.338         0.0898           43
-#&gt; 3 (0.454,0.741]   139   0.278       89       0.640         0.363            50
-#&gt; 4 (0.741, Inf]    129   0.258      115       0.891         0.469            14
+#&gt; 1 [-Inf,0.24]     114   0.228       14       0.123         0.0547          100
+#&gt; 2 (0.24,0.329]     56   0.112       19       0.339         0.0742           37
+#&gt; 3 (0.329,0.582]   129   0.258       71       0.550         0.277            58
+#&gt; 4 (0.582,0.884]   150   0.300      105       0.700         0.410            45
+#&gt; 5 (0.884, Inf]     51   0.102       47       0.922         0.184             4
 #&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;, woe &lt;dbl&gt;,
 #&gt; #   iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;
 #&gt; 

@@ -86,6 +86,89 @@
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># install.packages("devtools")</span>
 devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"jbkunst/irks"</span>)</code></pre></div>
 </div>
+<div id="descriptive" class="section level2">
+<h2 class="hasAnchor">
+<a href="#descriptive" class="anchor"></a>Descriptive</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(irks)
+<span class="kw">library</span>(dplyr)
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'dplyr'</span>
+<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     filter, lag</span>
+<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
+<span class="kw">data</span>(<span class="st">"german_credit"</span>)
+
+german_credit &lt;-<span class="st"> </span><span class="kw">select</span>(german_credit, good_bad, status_of_existing_checking_account,
+                        duration_in_month, savings_account_or_bonds, credit_amount,
+                        purpose, age_in_years)
+
+duni &lt;-<span class="st"> </span><span class="kw"><a href="reference/describe.html">describe</a></span>(german_credit)
+duni
+<span class="co">#&gt; $numeric</span>
+<span class="co">#&gt; # A tibble: 4 x 10</span>
+<span class="co">#&gt;   variable      n_unique na_percent   min     mean median    max  Variance</span>
+<span class="co">#&gt;   &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 good_bad            2.         0.    0.    0.700 1.00e0     1.   2.10e-1</span>
+<span class="co">#&gt; 2 duration_in_~      33.         0.    4.   20.9   1.80e1    72.   1.45e+2</span>
+<span class="co">#&gt; 3 credit_amount     921.         0.  250. 3271.    2.32e3 18424.   7.97e+6</span>
+<span class="co">#&gt; 4 age_in_years       53.         0.   19.   35.5   3.30e1    75.   1.29e+2</span>
+<span class="co">#&gt; # ... with 2 more variables: skewness &lt;dbl&gt;, kurtosis &lt;dbl&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $non_numeric</span>
+<span class="co">#&gt; # A tibble: 3 x 4</span>
+<span class="co">#&gt;   variable                            n_unique na_percent   hhi</span>
+<span class="co">#&gt;   &lt;chr&gt;                                  &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 status_of_existing_checking_account       4.         0. 0.307</span>
+<span class="co">#&gt; 2 savings_account_or_bonds                  5.         0. 0.414</span>
+<span class="co">#&gt; 3 purpose                                  10.         0. 0.189</span>
+
+dbiv &lt;-<span class="st"> </span><span class="kw"><a href="reference/describe_bivariate.html">describe_bivariate</a></span>(german_credit, <span class="dt">target =</span> good_bad, <span class="dt">verbose =</span> <span class="ot">FALSE</span>)
+
+<span class="kw">arrange</span>(dbiv, <span class="kw">desc</span>(iv))
+<span class="co">#&gt; # A tibble: 6 x 11</span>
+<span class="co">#&gt;   variable                   iv   hhi n_unique class   monotonous na_level</span>
+<span class="co">#&gt;   &lt;chr&gt;                   &lt;dbl&gt; &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt;   &lt;lgl&gt;      &lt;chr&gt;   </span>
+<span class="co">#&gt; 1 status_of_existing_ch~ 0.635  0.356        3 charac~ NA         (Missin~</span>
+<span class="co">#&gt; 2 duration_in_month      0.229  0.484        3 integer TRUE       (Missin~</span>
+<span class="co">#&gt; 3 savings_account_or_bo~ 0.189  0.585        2 charac~ NA         (Missin~</span>
+<span class="co">#&gt; 4 credit_amount          0.175  0.335        4 integer FALSE      (Missin~</span>
+<span class="co">#&gt; 5 purpose                0.142  0.523        2 charac~ NA         (Missin~</span>
+<span class="co">#&gt; 6 age_in_years           0.0732 0.692        2 integer TRUE       (Missin~</span>
+<span class="co">#&gt; # ... with 4 more variables: separate_missing &lt;lgl&gt;, dict &lt;list&gt;,</span>
+<span class="co">#&gt; #   summary &lt;list&gt;, binning &lt;list&gt;</span></code></pre></div>
+</div>
+<div id="binning" class="section level2">
+<h2 class="hasAnchor">
+<a href="#binning" class="anchor"></a>Binning</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span>german_credit<span class="op">$</span>duration_in_month
+y &lt;-<span class="st"> </span>german_credit<span class="op">$</span>good_bad
+
+bin &lt;-<span class="st"> </span><span class="kw"><a href="reference/binning.html">binning</a></span>(x, y)
+bin
+<span class="co">#&gt; binning object:</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Information Value: 0.229   medium </span>
+<span class="co">#&gt;  Herfindahl-Hirschman Index: 0.484   high concentration </span>
+<span class="co">#&gt;  Number of categories: 3 </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Summary table:</span>
+<span class="co">#&gt; # A tibble: 3 x 13</span>
+<span class="co">#&gt;   x             n percent target_n target_rate target_percent non_target_n</span>
+<span class="co">#&gt;   &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;dbl&gt;       &lt;dbl&gt;          &lt;dbl&gt;        &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 [-Inf,11]   180   0.180     153.       0.850          0.219          27.</span>
+<span class="co">#&gt; 2 (11,33]     650   0.650     459.       0.706          0.656         191.</span>
+<span class="co">#&gt; 3 (33, Inf]   170   0.170      88.       0.518          0.126          82.</span>
+<span class="co">#&gt; # ... with 6 more variables: non_target_percent &lt;dbl&gt;, odds &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   woe &lt;dbl&gt;, iv &lt;dbl&gt;, lower &lt;dbl&gt;, upper &lt;dbl&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Object values: dict, summary, separate_missing, iv, hhi, monotonous, na_level, class</span>
+
+<span class="kw">plot</span>(bin)</code></pre></div>
+<p><img src="../../../Docs/dev/irks/man/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+</div>
 <div id="model-helpers" class="section level2">
 <h2 class="hasAnchor">
 <a href="#model-helpers" class="anchor"></a>Model helpers</h2>
@@ -93,26 +176,31 @@ devtools<span class="op">::</span><span class="kw"><a href="http://www.rdocument
 <h3 class="hasAnchor">
 <a href="#var_importance" class="anchor"></a><code>var_importance</code>
 </h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rf &lt;-<span class="st"> </span>randomForest<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/randomForest/topics/randomForest">randomForest</a></span>(Species <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> iris)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">german_credit &lt;-<span class="st"> </span><span class="kw">mutate_if</span>(german_credit, is.character, as.factor)
+
+rf &lt;-<span class="st"> </span>randomForest<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/randomForest/topics/randomForest">randomForest</a></span>(<span class="kw">factor</span>(good_bad) <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> german_credit)
 <span class="kw"><a href="reference/var_importance.html">var_importance</a></span>(rf)
-<span class="co">#&gt; # A tibble: 4 x 2</span>
-<span class="co">#&gt;   variable     importance</span>
-<span class="co">#&gt;   &lt;chr&gt;             &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 Petal.Width       47.5 </span>
-<span class="co">#&gt; 2 Petal.Length      39.6 </span>
-<span class="co">#&gt; 3 Sepal.Length       9.69</span>
-<span class="co">#&gt; 4 Sepal.Width        2.40</span>
+<span class="co">#&gt; # A tibble: 6 x 2</span>
+<span class="co">#&gt;   variable                            importance</span>
+<span class="co">#&gt;   &lt;chr&gt;                                    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 credit_amount                            107. </span>
+<span class="co">#&gt; 2 age_in_years                              79.5</span>
+<span class="co">#&gt; 3 duration_in_month                         66.1</span>
+<span class="co">#&gt; 4 status_of_existing_checking_account       58.1</span>
+<span class="co">#&gt; 5 purpose                                   52.2</span>
+<span class="co">#&gt; 6 savings_account_or_bonds                  31.0</span>
 
-rrf &lt;-<span class="st"> </span>RRF<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/RRF/topics/RRF">RRF</a></span>(Species <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> iris)
+rrf &lt;-<span class="st"> </span>RRF<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/RRF/topics/RRF">RRF</a></span>(<span class="kw">factor</span>(good_bad) <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> german_credit)
 <span class="kw"><a href="reference/var_importance.html">var_importance</a></span>(rrf)
-<span class="co">#&gt; # A tibble: 4 x 2</span>
-<span class="co">#&gt;   variable     importance</span>
-<span class="co">#&gt;   &lt;chr&gt;             &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 Petal.Width       50.7 </span>
-<span class="co">#&gt; 2 Petal.Length      46.0 </span>
-<span class="co">#&gt; 3 Sepal.Width        1.38</span>
-<span class="co">#&gt; 4 Sepal.Length       1.20</span>
-
+<span class="co">#&gt; # A tibble: 6 x 2</span>
+<span class="co">#&gt;   variable                            importance</span>
+<span class="co">#&gt;   &lt;chr&gt;                                    &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 credit_amount                            126. </span>
+<span class="co">#&gt; 2 age_in_years                              86.0</span>
+<span class="co">#&gt; 3 duration_in_month                         66.2</span>
+<span class="co">#&gt; 4 status_of_existing_checking_account       60.7</span>
+<span class="co">#&gt; 5 purpose                                   49.1</span>
+<span class="co">#&gt; 6 savings_account_or_bonds                  30.2</span>
 
 <span class="kw">suppressMessages</span>(<span class="kw">library</span>(partykit))
 ct &lt;-<span class="st"> </span><span class="kw">ctree</span>(Species <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> iris)
