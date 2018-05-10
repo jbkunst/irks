@@ -184,22 +184,22 @@ rf &lt;-<span class="st"> </span>randomForest<span class="op">::</span><span cla
 <span class="co">#&gt;   variable                            importance</span>
 <span class="co">#&gt;   &lt;chr&gt;                                    &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 credit_amount                            107. </span>
-<span class="co">#&gt; 2 age_in_years                              79.5</span>
-<span class="co">#&gt; 3 duration_in_month                         66.1</span>
+<span class="co">#&gt; 2 age_in_years                              79.2</span>
+<span class="co">#&gt; 3 duration_in_month                         66.6</span>
 <span class="co">#&gt; 4 status_of_existing_checking_account       58.1</span>
 <span class="co">#&gt; 5 purpose                                   52.2</span>
-<span class="co">#&gt; 6 savings_account_or_bonds                  31.0</span>
+<span class="co">#&gt; 6 savings_account_or_bonds                  31.5</span>
 
 rrf &lt;-<span class="st"> </span>RRF<span class="op">::</span><span class="kw"><a href="http://www.rdocumentation.org/packages/RRF/topics/RRF">RRF</a></span>(<span class="kw">factor</span>(good_bad) <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> german_credit)
 <span class="kw"><a href="reference/var_importance.html">var_importance</a></span>(rrf)
 <span class="co">#&gt; # A tibble: 6 x 2</span>
 <span class="co">#&gt;   variable                            importance</span>
 <span class="co">#&gt;   &lt;chr&gt;                                    &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 credit_amount                            126. </span>
-<span class="co">#&gt; 2 age_in_years                              86.0</span>
-<span class="co">#&gt; 3 duration_in_month                         66.2</span>
-<span class="co">#&gt; 4 status_of_existing_checking_account       60.7</span>
-<span class="co">#&gt; 5 purpose                                   49.1</span>
+<span class="co">#&gt; 1 credit_amount                            127. </span>
+<span class="co">#&gt; 2 age_in_years                              85.8</span>
+<span class="co">#&gt; 3 duration_in_month                         66.3</span>
+<span class="co">#&gt; 4 status_of_existing_checking_account       60.0</span>
+<span class="co">#&gt; 5 purpose                                   49.0</span>
 <span class="co">#&gt; 6 savings_account_or_bonds                  30.2</span>
 
 <span class="kw">suppressMessages</span>(<span class="kw">library</span>(partykit))

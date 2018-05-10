@@ -2,8 +2,3 @@ template:
   params:
     bootswatch: paper
 
-# reference:
-#   - title: binnig
-    # contents:
-    # - starts_with("binning")
-    # - plot
