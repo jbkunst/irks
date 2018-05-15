@@ -11,7 +11,7 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/paper/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/sandstone/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
@@ -108,7 +108,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>describe_bivariate</span>(<span class='no'>data</span>, <span class='no'>target</span>, <span class='kw'>p.min</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
+    <pre class="usage"><span class='fu'>describe_bivariate</span>(<span class='no'>data</span>, <span class='no'>target</span>, <span class='kw'>p.min</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
   <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -141,52 +141,42 @@
     <pre class="examples"><div class='input'>
 <span class='fu'>data</span>(<span class='st'>"german_credit"</span>)
 
-<span class='fu'>describe_bivariate</span>(<span class='no'>german_credit</span>, <span class='kw'>target</span> <span class='kw'>=</span> <span class='no'>good_bad</span>)</div><div class='output co'>#&gt;   |                          |                  |   0%  |                          |=                 |   5% status_of_existing_checking_account                        |                          |==                |  10% duration_in_month                                          |                          |===               |  15% credit_history                                             |                          |====              |  20% purpose                                                    |                          |====              |  25% credit_amount                                              |                          |=====             |  30% savings_account_or_bonds                                   |                          |======            |  35% present_employment_since                                   |                          |=======           |  40% installment_rate_in_percentage_of_disposable_income        |                          |========          |  45% personal_status_and_sex                                    |                          |=========         |  50% other_debtors_or_guarantors                                |                          |==========        |  55% present_residence_since                                    |                          |===========       |  60% property                                                   |                          |============      |  65% age_in_years                                               |                          |=============     |  70% other_installment_plans                                    |                          |==============    |  75% housing                                                    |                          |==============    |  80% number_of_existing_credits_at_this_bank                    |                          |===============   |  85% job                                                        |                          |================  |  90% number_of_people_being_liable_to_provide_maintenance_for   |                          |================= |  95% telephone                                                  |                          |==================| 100% foreign_worker                                           </div><div class='output co'>#&gt; # A tibble: 20 x 11
+<span class='no'>dbiv</span> <span class='kw'>&lt;-</span> <span class='fu'>describe_bivariate</span>(<span class='no'>german_credit</span>, <span class='kw'>target</span> <span class='kw'>=</span> <span class='no'>good_bad</span>)</div><div class='output co'>#&gt;   |                          |                  |   0%  |                          |=                 |   5% status_of_existing_checking_account                        |                          |==                |  10% duration_in_month                                          |                          |===               |  15% credit_history                                             |                          |====              |  20% purpose                                                    |                          |====              |  25% credit_amount                                              |                          |=====             |  30% savings_account_or_bonds                                   |                          |======            |  35% present_employment_since                                   |                          |=======           |  40% installment_rate_in_percentage_of_disposable_income        |                          |========          |  45% personal_status_and_sex                                    |                          |=========         |  50% other_debtors_or_guarantors                                |                          |==========        |  55% present_residence_since                                    |                          |===========       |  60% property                                                   |                          |============      |  65% age_in_years                                               |                          |=============     |  70% other_installment_plans                                    |                          |==============    |  75% housing                                                    |                          |==============    |  80% number_of_existing_credits_at_this_bank                    |                          |===============   |  85% job                                                        |                          |================  |  90% number_of_people_being_liable_to_provide_maintenance_for   |                          |================= |  95% telephone                                                  |                          |==================| 100% foreign_worker                                           </div><div class='input'><span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/dplyr/topics/reexports'>glimpse</a></span>(<span class='no'>dbiv</span>)</div><div class='output co'>#&gt; Observations: 20
+#&gt; Variables: 11
+#&gt; $ variable         &lt;chr&gt; "status_of_existing_checking_account", "duration_i...
+#&gt; $ iv               &lt;dbl&gt; 0.66601150, 0.22929615, 0.29182909, 0.14209197, 0....
+#&gt; $ hhi              &lt;dbl&gt; 0.306642, 0.483800, 0.475694, 0.523328, 0.505850, ...
+#&gt; $ n_unique         &lt;int&gt; 4, 3, 3, 2, 4, 2, 2, 2, 2, 2, 1, 3, 2, 2, 2, 1, 1,...
+#&gt; $ class            &lt;chr&gt; "character", "integer", "character", "character", ...
+#&gt; $ monotonous       &lt;lgl&gt; NA, TRUE, NA, NA, FALSE, NA, NA, TRUE, NA, NA, FAL...
+#&gt; $ na_level         &lt;chr&gt; "(Missing)", "(Missing)", "(Missing)", "(Missing)"...
+#&gt; $ separate_missing &lt;lgl&gt; NA, FALSE, NA, NA, FALSE, NA, NA, FALSE, NA, NA, F...
+#&gt; $ dict             &lt;list&gt; [&lt;# A tibble: 4 x 2,   x                         ...
+#&gt; $ summary          &lt;list&gt; [&lt;# A tibble: 4 x 13,   x         n percent targe...
+#&gt; $ binning          &lt;list&gt; [&lt;value &lt; 0_dm, 0 &lt;= value &lt; 200_dm, value &gt;= 200...</div><div class='input'>
+<span class='fu'>describe_bivariate</span>(<span class='no'>german_credit</span>, <span class='kw'>target</span> <span class='kw'>=</span> <span class='no'>good_bad</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</div><div class='output co'>#&gt;   |                          |                  |   0%  |                          |=                 |   5% status_of_existing_checking_account                        |                          |==                |  10% duration_in_month                                          |                          |===               |  15% credit_history                                             |                          |====              |  20% purpose                                                    |                          |====              |  25% credit_amount                                              |                          |=====             |  30% savings_account_or_bonds                                   |                          |======            |  35% present_employment_since                                   |                          |=======           |  40% installment_rate_in_percentage_of_disposable_income        |                          |========          |  45% personal_status_and_sex                                    |                          |=========         |  50% other_debtors_or_guarantors                                |                          |==========        |  55% present_residence_since                                    |                          |===========       |  60% property                                                   |                          |============      |  65% age_in_years                                               |                          |=============     |  70% other_installment_plans                                    |                          |==============    |  75% housing                                                    |                          |==============    |  80% number_of_existing_credits_at_this_bank                    |                          |===============   |  85% job                                                        |                          |================  |  90% number_of_people_being_liable_to_provide_maintenance_for   |                          |================= |  95% telephone                                                  |                          |==================| 100% foreign_worker                                           </div><div class='output co'>#&gt; # A tibble: 20 x 11
 #&gt;    variable        iv   hhi n_unique class monotonous na_level separate_missing
 #&gt;    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;      &lt;chr&gt;    &lt;lgl&gt;           
-#&gt;  1 status_of_~ 0.635  0.356        3 char~ NA         (Missin~ NA              
-#&gt;  2 duration_i~ 0.229  0.484        3 inte~ TRUE       (Missin~ FALSE           
-#&gt;  3 credit_his~ 0.227  0.398        3 char~ NA         (Missin~ NA              
-#&gt;  4 purpose     0.142  0.523        2 char~ NA         (Missin~ NA              
-#&gt;  5 credit_amo~ 0.175  0.335        4 inte~ FALSE      (Missin~ FALSE           
-#&gt;  6 savings_ac~ 0.189  0.585        2 char~ NA         (Missin~ NA              
-#&gt;  7 present_em~ 0.0627 0.642        2 char~ NA         (Missin~ NA              
-#&gt;  8 installmen~ 0.0239 0.501        2 inte~ TRUE       (Missin~ FALSE           
-#&gt;  9 personal_s~ 0.0426 0.539        2 char~ NA         (Missin~ NA              
-#&gt; 10 other_debt~ 0.     1.00         1 char~ NA         (Missin~ NA              
-#&gt; 11 present_re~ 0.     1.00         1 inte~ FALSE      (Missin~ FALSE           
-#&gt; 12 property    0.113  0.421        3 char~ NA         (Missin~ NA              
-#&gt; 13 age_in_yea~ 0.0732 0.692        2 inte~ TRUE       (Missin~ FALSE           
-#&gt; 14 other_inst~ 0.0576 0.697        2 char~ NA         (Missin~ NA              
-#&gt; 15 housing     0.0830 0.591        2 char~ NA         (Missin~ NA              
-#&gt; 16 number_of_~ 0.     1.00         1 inte~ FALSE      (Missin~ FALSE           
-#&gt; 17 job         0.     1.00         1 char~ NA         (Missin~ NA              
-#&gt; 18 number_of_~ 0.     1.00         1 inte~ FALSE      (Missin~ FALSE           
-#&gt; 19 telephone   0.     1.00         1 char~ NA         (Missin~ NA              
-#&gt; 20 foreign_wo~ 0.     1.00         1 char~ NA         (Missin~ NA              
-#&gt; # ... with 3 more variables: dict &lt;list&gt;, summary &lt;list&gt;, binning &lt;list&gt;</div><div class='input'><span class='fu'>describe_bivariate</span>(<span class='no'>german_credit</span>, <span class='kw'>target</span> <span class='kw'>=</span> <span class='no'>good_bad</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</div><div class='output co'>#&gt;   |                          |                  |   0%  |                          |=                 |   5% status_of_existing_checking_account                        |                          |==                |  10% duration_in_month                                          |                          |===               |  15% credit_history                                             |                          |====              |  20% purpose                                                    |                          |====              |  25% credit_amount                                              |                          |=====             |  30% savings_account_or_bonds                                   |                          |======            |  35% present_employment_since                                   |                          |=======           |  40% installment_rate_in_percentage_of_disposable_income        |                          |========          |  45% personal_status_and_sex                                    |                          |=========         |  50% other_debtors_or_guarantors                                |                          |==========        |  55% present_residence_since                                    |                          |===========       |  60% property                                                   |                          |============      |  65% age_in_years                                               |                          |=============     |  70% other_installment_plans                                    |                          |==============    |  75% housing                                                    |                          |==============    |  80% number_of_existing_credits_at_this_bank                    |                          |===============   |  85% job                                                        |                          |================  |  90% number_of_people_being_liable_to_provide_maintenance_for   |                          |================= |  95% telephone                                                  |                          |==================| 100% foreign_worker                                           </div><div class='output co'>#&gt; # A tibble: 20 x 11
-#&gt;    variable        iv   hhi n_unique class monotonous na_level separate_missing
-#&gt;    &lt;chr&gt;        &lt;dbl&gt; &lt;dbl&gt;    &lt;int&gt; &lt;chr&gt; &lt;lgl&gt;      &lt;chr&gt;    &lt;lgl&gt;           
-#&gt;  1 status_of~ 0.635   0.356        3 char~ NA         (Missin~ NA              
-#&gt;  2 duration_~ 0.250   0.284        4 inte~ TRUE       (Missin~ FALSE           
-#&gt;  3 credit_hi~ 0.227   0.398        3 char~ NA         (Missin~ NA              
+#&gt;  1 status_of~ 0.666   0.307        4 char~ NA         (Missin~ NA              
+#&gt;  2 duration_~ 0.302   0.228        7 inte~ FALSE      (Missin~ FALSE           
+#&gt;  3 credit_hi~ 0.292   0.476        3 char~ NA         (Missin~ NA              
 #&gt;  4 purpose    0.153   0.461        3 char~ NA         (Missin~ NA              
-#&gt;  5 credit_am~ 0.228   0.151        7 inte~ FALSE      (Missin~ FALSE           
+#&gt;  5 credit_am~ 0.252   0.483        6 inte~ FALSE      (Missin~ FALSE           
 #&gt;  6 savings_a~ 0.189   0.585        2 char~ NA         (Missin~ NA              
 #&gt;  7 present_e~ 0.0853  0.264        4 char~ NA         (Missin~ NA              
 #&gt;  8 installme~ 0.0256  0.386        3 inte~ TRUE       (Missin~ FALSE           
 #&gt;  9 personal_~ 0.0426  0.539        2 char~ NA         (Missin~ NA              
-#&gt; 10 other_deb~ 0.      1.00         1 char~ NA         (Missin~ NA              
-#&gt; 11 present_r~ 0.      1.00         1 inte~ FALSE      (Missin~ FALSE           
+#&gt; 10 other_deb~ 0.0164  0.901        2 char~ NA         (Missin~ NA              
+#&gt; 11 present_r~ 0       1            1 inte~ FALSE      (Missin~ FALSE           
 #&gt; 12 property   0.113   0.421        3 char~ NA         (Missin~ NA              
-#&gt; 13 age_in_ye~ 0.125   0.232        5 inte~ FALSE      (Missin~ FALSE           
+#&gt; 13 age_in_ye~ 0.132   0.240        6 inte~ FALSE      (Missin~ FALSE           
 #&gt; 14 other_ins~ 0.0576  0.697        2 char~ NA         (Missin~ NA              
 #&gt; 15 housing    0.0830  0.591        2 char~ NA         (Missin~ NA              
 #&gt; 16 number_of~ 0.0101  0.535        2 inte~ TRUE       (Missin~ FALSE           
-#&gt; 17 job        0.      1.00         1 char~ NA         (Missin~ NA              
-#&gt; 18 number_of~ 0.      1.00         1 inte~ FALSE      (Missin~ FALSE           
+#&gt; 17 job        0       1            1 char~ NA         (Missin~ NA              
+#&gt; 18 number_of~ 0       1            1 inte~ FALSE      (Missin~ FALSE           
 #&gt; 19 telephone  0.00638 0.518        2 char~ NA         (Missin~ NA              
-#&gt; 20 foreign_w~ 0.      1.00         1 char~ NA         (Missin~ NA              
+#&gt; 20 foreign_w~ 0       1            1 char~ NA         (Missin~ NA              
 #&gt; # ... with 3 more variables: dict &lt;list&gt;, summary &lt;list&gt;, binning &lt;list&gt;</div><div class='input'>
 
 </div><span class='co'># NOT RUN {</span>
