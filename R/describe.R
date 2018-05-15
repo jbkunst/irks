@@ -175,7 +175,7 @@ describe <- function(data) {
 #' }
 #'
 #' @export
-describe_bivariate <- function(data, target, p.min = 0.1, alpha = 0.05, verbose = TRUE){
+describe_bivariate <- function(data, target, p.min = 0.05, alpha = 0.05, verbose = TRUE){
 
   # data <- german_credit %>% dplyr::select(good_bad, credit_amount, purpose, duration_in_month, foreign_worker)
   # target <- rlang::expr(good_bad)

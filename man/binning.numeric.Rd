@@ -4,7 +4,7 @@
 \alias{binning.numeric}
 \title{Grouping or binning for numeric variables}
 \usage{
-\method{binning}{numeric}(x, y, p.min = 0.1, alpha = 0.05,
+\method{binning}{numeric}(x, y, p.min = 0.05, alpha = 0.05,
   na_level = "(Missing)", ...)
 }
 \arguments{

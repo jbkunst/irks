@@ -5,9 +5,9 @@
 \alias{binning.default}
 \title{Grouping or binning}
 \usage{
-binning(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...)
+binning(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...)
 
-\method{binning}{default}(x, y, p.min = 0.1, alpha = 0.05,
+\method{binning}{default}(x, y, p.min = 0.05, alpha = 0.05,
   na_level = "(Missing)", ...)
 }
 \arguments{

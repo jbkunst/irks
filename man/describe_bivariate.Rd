@@ -4,7 +4,7 @@
 \alias{describe_bivariate}
 \title{Describe Bivariate}
 \usage{
-describe_bivariate(data, target, p.min = 0.1, alpha = 0.05,
+describe_bivariate(data, target, p.min = 0.05, alpha = 0.05,
   verbose = TRUE)
 }
 \arguments{
@@ -25,7 +25,9 @@ Describe Bivariate
 
 data("german_credit")
 
-describe_bivariate(german_credit, target = good_bad)
+dbiv <- describe_bivariate(german_credit, target = good_bad)
+dplyr::glimpse(dbiv)
+
 describe_bivariate(german_credit, target = good_bad, alpha = 0.5)
 
 

@@ -11,8 +11,9 @@ library(irks)
 knitr::opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
+  message = FALSE,
   comment = "#>",
-  fig.path = "man/figures/README-",
+  # fig.path = "man/figures/README-",
   out.width = "100%"
 )
 
@@ -71,7 +72,7 @@ y <- german_credit$good_bad
 bin <- binning(x, y)
 bin
 
-plot(bin)
+# plot(bin)
 ```
 
 
@@ -88,7 +89,7 @@ var_importance(rf)
 rrf <- RRF::RRF(factor(good_bad) ~ ., data = german_credit)
 var_importance(rrf)
 
-suppressMessages(library(partykit))
+library(partykit)
 ct <- ctree(Species ~ ., data = iris)
 ct_rules(ct)
 ```

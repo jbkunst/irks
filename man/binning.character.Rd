@@ -4,7 +4,7 @@
 \alias{binning.character}
 \title{Grouping or binning character/factors variables}
 \usage{
-\method{binning}{character}(x, y, p.min = 0.1, alpha = 0.05,
+\method{binning}{character}(x, y, p.min = 0.05, alpha = 0.05,
   na_level = "(Missing)", ...)
 }
 \arguments{

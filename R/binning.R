@@ -9,7 +9,7 @@
 #' @param na_level String for determinar de NA level.
 #' @param ... Additional arguments for the binning process.
 #' @export
-binning <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...) {
+binning <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...) {
   UseMethod("binning")
 }
 
@@ -21,7 +21,7 @@ binning <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...
 # @param ... Additional arguments for the binning process.
 #' @rdname binning
 #' @export
-binning.default <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...) {
+binning.default <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...) {
   stop("Objects of class/type ", paste(class(x), collapse = "/"),
        " are not supported by binning (yet).", call. = FALSE)
 }
@@ -40,14 +40,14 @@ binning.default <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missin
 #' binning(german_credit$credit_amount, german_credit$good_bad)
 #'
 #' @export
-binning.numeric <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...){
+binning.numeric <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...){
 
   # y <- german_credit$good_bad
   # x <- german_credit$duration_in_month
   # p.min = 0.05; alpha = 0.05
 
   m <- min(x, na.rm = TRUE)
-  m2 <- m - 9999
+  m2 <- m - 1
 
   x <- ifelse(is.na(x), m2, x)
 
@@ -130,7 +130,7 @@ binning.numeric <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missin
 #' binning(german_credit$purpose, german_credit$good_bad)
 #'
 #' @export
-binning.character <- function(x, y, p.min = 0.1, alpha = 0.05, na_level = "(Missing)", ...) {
+binning.character <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...) {
 
   # x <- german_credit$purpose
   # y <- german_credit$good_bad
@@ -265,7 +265,7 @@ apply_binning <- function(bin, x, woe = FALSE) {
   if(class(x) %in% c("character", "factor")){
 
     xnew <- data.frame(x, stringsAsFactors = FALSE) %>%
-      dplyr::left_join(bin$dict) %>%
+      dplyr::left_join(bin$dict, by = "x") %>%
       dplyr::pull("group")
 
   }
