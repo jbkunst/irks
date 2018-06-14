@@ -155,11 +155,34 @@ model_check <- function(model) {
 
 model_check_significant_coefficients <- function(model, sig.level = 0.1) {
 
-  modelo %>%
+  model %>%
     broom::tidy() %>%
     dplyr::filter(term != "(Intercept)") %>%
     dplyr::filter(p.value >= sig.level) %>%
     nrow() == 0
 
 }
+
+model_check_monotonous <- function(model, missing_category = "(Missing)") {
+  # model <- modelostep
+  irks::model_summary(model) %>%
+    filter(variable != "(Intercept)") %>%
+    filter(category != missing_category) %>%
+    mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
+    select(variable, category, estimate, target_rate) %>%
+    group_by(variable) %>%
+    mutate(
+      diff_estimate = c(NA, diff(estimate)),
+      diff_target_rate = c(NA, diff(target_rate)),
+      sign_estimate = sign(diff_estimate),
+      sign_target_rate = sign(diff_target_rate)
+    ) %>%
+    summarise(
+      tbl_sign_estimate = length(table(sign_estimate)),
+      tbl_sign_target_rate = length(table(sign_target_rate))
+    ) %>%
+    filter(tbl_sign_estimate > 1) %>%
+    nrow() > 0
+}
+
 
