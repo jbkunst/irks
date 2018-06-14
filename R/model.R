@@ -185,4 +185,81 @@ model_check_monotonous <- function(model, missing_category = "(Missing)") {
     nrow() > 0
 }
 
+plot_model <- function(model){
+  model %>%
+    irks::model_summary() %>%
+    filter(variable != "(Intercept)") %>%
+    mutate(category = fct_inorder(category)) %>%
+    mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
+    mutate(variable2 = as.character(variable)) %>%
+    mutate(variable2 = fct_inorder(variable2)) %>%
+    ggplot() +
+    # geom_col(aes(category, marginal_percent), width = 0.5, fill = "gray80") +
+    geom_col(aes(category, marginal_percent), group = "estimacion", color = NA, alpha = 0.2, width = 0.3) +
+    geom_line(aes(category, target_rate), group = "target_rate_dev", color = "red") +
+    geom_line(aes(category, estimate), group = "estimacion", color = "blue") +
+    facet_wrap( ~ variable2, scales = "free",  labeller = labeller(label = label_wrap_gen(35))) +
+    labs(x = "Categoría", y = "Porcentaje/Tasa de Incumplimiento") +
+    theme(strip.text.x = element_text(size = 8))
+}
+
+
+while(
+  (
+    !irks:::model_check_significant_coefficients(modelo, 0.1)
+  ) |
+  (
+    model_check_monotonous(modelo) %>%
+    filter(tbl_sign_estimate > 1) %>%
+    nrow() > 0
+    # FALSE
+  )
+) {
+
+  delta <- delta + 2.5/100
+
+  message(delta)
+
+  vars_to_fix1 <- tidy(modelo) %>%
+    filter(term != "(Intercept)") %>%
+    separate(term, c("variable", "categoria"), sep = "Missing|\\(") %>%
+    filter(p.value >= .1) %>%
+    distinct(variable) %>%
+    pull()
+
+  vars_to_fix2 <- model_check_monotonous(modelo) %>%
+    filter(tbl_sign_estimate > 1) %>%
+    pull(variable) %>%
+    as.character()
+
+  vars_to_fix <- unique(c(vars_to_fix1, vars_to_fix2))
+
+  message("Var to fix: ", paste(vars_to_fix, collapse = ", "))
+
+  dfbreaks <- map(vars_to_fix, get_cats)
+
+  dfbreaks <- data_frame(
+    variable = vars_to_fix,
+    binning = dfbreaks
+  )
+
+  dfbreaks_tot <- bind_rows(dfbreaks_tot, dfbreaks)
+
+  data_trainc <- map_dfr(str_remove(vars_to_fix, "_cat") %>% set_names(., .), create_cat_var)
+  data_trainc <- rename_all(data_trainc, ~ paste0(.x, "_cat"))
+
+  data_train <- data_train %>%
+    select_(.dots = setdiff(names(data_train), vars_to_fix)) %>%
+    bind_cols(data_trainc)
+
+  modelo <- glm(as.formula(modelo), data = data_train, family = binomial(link = logit))
+
+  print(summary(modelo))
+  print(plot_model(modelo) + ggtitle(paste("Iteracion ", iteracion)))
+  iteracion <- iteracion + 1
+}
+
+print(summary(modelo))
+
+plot_model(modelo)
 
