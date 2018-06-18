@@ -150,165 +150,165 @@ scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientati
 }
 
 
-model_variables <- function(model) {
-
-  # names(model$xlevels)
-  model %>%
-    as.formula() %>%
-    as.character() %>%
-    last() %>%
-    str_split("\\s\\+\\s") %>%
-    unlist()
-
-}
-
-
-# model <- readRDS("data-raw/modelo.rds")
-model_check <- function(model, sig.level = 0.1, missing_category = "(Missing)")  {
-  all(
-    model_check_significant_coefficients(model, sig.level),
-    model_check_monotonous(model, missing_category)
-  )
-}
-
-model_check_significant_coefficients_detail <- function(model, sig.level = 0.1) {
-
-  irks::model_summary(model) %>%
-    dplyr::filter(p.value >= sig.level) %>%
-    pull(variable) %>%
-    unique() %>%
-    as.character()
-
-}
-
-model_check_significant_coefficients <- function(model, sig.level = 0.1){
-
-  length(model_check_significant_coefficients_detail(model, sig.level)) == 0
-
-}
-
-model_check_monotonous_detail <- function(model, missing_category = "(Missing)") {
-
-  numeric_variables <- model_variables(model) %>%
-    str_remove("_cat") %>%
-    select(model$data, .) %>%
-    map(class) %>%
-    map_chr(first) %>%
-    enframe() %>%
-    filter(value == "numeric") %>%
-    pull(name)
-
-  # model <- modelostep
-  irks::model_summary(model) %>%
-    filter(variable != "(Intercept)") %>%
-    filter(variable %in% str_c(numeric_variables, "_cat", sep = "")) %>%
-    filter(category != missing_category) %>%
-    mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
-    select(variable, category, estimate, target_rate) %>%
-    group_by(variable) %>%
-    mutate(
-      diff_estimate = c(NA, diff(estimate)),
-      diff_target_rate = c(NA, diff(target_rate)),
-      sign_estimate = sign(diff_estimate),
-      sign_target_rate = sign(diff_target_rate)
-    ) %>%
-    summarise(
-      tbl_sign_estimate = length(table(sign_estimate)),
-      tbl_sign_target_rate = length(table(sign_target_rate))
-    ) %>%
-    filter(tbl_sign_estimate > 1) %>%
-    pull(variable) %>%
-    as.character()
-
-}
-
-model_check_monotonous <- function(model, missing_category = "(Missing)") {
-
-  length(model_check_monotonous_detail(model, missing_category)) == 0
-
-}
-
-plot_model <- function(model){
-  model %>%
-    irks::model_summary() %>%
-    filter(variable != "(Intercept)") %>%
-    mutate(category = fct_inorder(category)) %>%
-    mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
-    mutate(variable2 = as.character(variable)) %>%
-    mutate(variable2 = fct_inorder(variable2)) %>%
-    ggplot() +
-    # geom_col(aes(category, marginal_percent), width = 0.5, fill = "gray80") +
-    geom_col(aes(category, marginal_percent), group = "estimacion", color = NA, alpha = 0.2, width = 0.3) +
-    geom_line(aes(category, target_rate), group = "target_rate_dev", color = "red") +
-    geom_line(aes(category, estimate), group = "estimacion", color = "blue") +
-    facet_wrap( ~ variable2, scales = "free",  labeller = labeller(label = label_wrap_gen(35))) +
-    labs(x = "Categoría", y = "Porcentaje/Tasa de Incumplimiento") +
-    theme(strip.text.x = element_text(size = 8))
-}
-
-
-fix_model <- function(model, sig.level = 0.1, missing_category = "(Missing)", p.min = 0.05, verbose = TRUE) {
-
-  iter <- 1
-  delta <- 0
-
-  data <- model$data
-
-  while(!model_check(model, sig.level = 0.1, missing_category = "(Missing)")) {
-
-    if(verbose) message("Iteration: ", iter)
-
-    delta <- delta + delta
-
-    vars_to_fix <- c(
-      model_check_monotonous_detail(model),
-      model_check_significant_coefficients_detail(model)
-    ) %>%
-      unique()
-
-    message("\tVariables to treat: ", str_c(vars_to_fix, collapse = ", "))
-
-    dfbreaks <- map(vars_to_fix, function(varname){ # varname <- "antiguedad_cmr_cat"
-
-      binning(
-        data[[str_remove(varname, "_cat")]],
-        data %>%
-          mutate_(.dots  = set_names(as.character(as.formula(model))[2], nameresponse)) %>%
-          pull(nameresponse) %>%
-          as.character() %>%
-          as.numeric()
-      )
-
-      nameresponse <- str_c(sample(LETTERS, size = 5), collapse = "")
-
-
-
-       %>%
-        binning(y = data_train$marca_inc_12m, p.min = PARS$P_MIN_BUCKET + delta)
-
-      data
-
-    })
-
-    dfbreaks <- data_frame(
-      variable = vars_to_fix,
-      binning = dfbreaks
-    )
-
-    dfbreaks_tot <- bind_rows(dfbreaks_tot, dfbreaks)
-
-    data_trainc <- map_dfr(str_remove(vars_to_fix, "_cat") %>% set_names(., .), create_cat_var)
-    data_trainc <- rename_all(data_trainc, ~ paste0(.x, "_cat"))
-
-    data_train <- data_train %>%
-      select_(.dots = setdiff(names(data_train), vars_to_fix)) %>%
-      bind_cols(data_trainc)
-
-    modelo <- glm(as.formula(modelo), data = data_train, family = binomial(link = logit))
-
-
-  }
-
-
-}
+# model_variables <- function(model) {
+#
+#   # names(model$xlevels)
+#   model %>%
+#     as.formula() %>%
+#     as.character() %>%
+#     last() %>%
+#     str_split("\\s\\+\\s") %>%
+#     unlist()
+#
+# }
+#
+#
+# # model <- readRDS("data-raw/modelo.rds")
+# model_check <- function(model, sig.level = 0.1, missing_category = "(Missing)")  {
+#   all(
+#     model_check_significant_coefficients(model, sig.level),
+#     model_check_monotonous(model, missing_category)
+#   )
+# }
+#
+# model_check_significant_coefficients_detail <- function(model, sig.level = 0.1) {
+#
+#   irks::model_summary(model) %>%
+#     dplyr::filter(p.value >= sig.level) %>%
+#     pull(variable) %>%
+#     unique() %>%
+#     as.character()
+#
+# }
+#
+# model_check_significant_coefficients <- function(model, sig.level = 0.1){
+#
+#   length(model_check_significant_coefficients_detail(model, sig.level)) == 0
+#
+# }
+#
+# model_check_monotonous_detail <- function(model, missing_category = "(Missing)") {
+#
+#   numeric_variables <- model_variables(model) %>%
+#     str_remove("_cat") %>%
+#     select(model$data, .) %>%
+#     map(class) %>%
+#     map_chr(first) %>%
+#     enframe() %>%
+#     filter(value == "numeric") %>%
+#     pull(name)
+#
+#   # model <- modelostep
+#   irks::model_summary(model) %>%
+#     filter(variable != "(Intercept)") %>%
+#     filter(variable %in% str_c(numeric_variables, "_cat", sep = "")) %>%
+#     filter(category != missing_category) %>%
+#     mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
+#     select(variable, category, estimate, target_rate) %>%
+#     group_by(variable) %>%
+#     mutate(
+#       diff_estimate = c(NA, diff(estimate)),
+#       diff_target_rate = c(NA, diff(target_rate)),
+#       sign_estimate = sign(diff_estimate),
+#       sign_target_rate = sign(diff_target_rate)
+#     ) %>%
+#     summarise(
+#       tbl_sign_estimate = length(table(sign_estimate)),
+#       tbl_sign_target_rate = length(table(sign_target_rate))
+#     ) %>%
+#     filter(tbl_sign_estimate > 1) %>%
+#     pull(variable) %>%
+#     as.character()
+#
+# }
+#
+# model_check_monotonous <- function(model, missing_category = "(Missing)") {
+#
+#   length(model_check_monotonous_detail(model, missing_category)) == 0
+#
+# }
+#
+# plot_model <- function(model){
+#   model %>%
+#     irks::model_summary() %>%
+#     filter(variable != "(Intercept)") %>%
+#     mutate(category = fct_inorder(category)) %>%
+#     mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
+#     mutate(variable2 = as.character(variable)) %>%
+#     mutate(variable2 = fct_inorder(variable2)) %>%
+#     ggplot() +
+#     # geom_col(aes(category, marginal_percent), width = 0.5, fill = "gray80") +
+#     geom_col(aes(category, marginal_percent), group = "estimacion", color = NA, alpha = 0.2, width = 0.3) +
+#     geom_line(aes(category, target_rate), group = "target_rate_dev", color = "red") +
+#     geom_line(aes(category, estimate), group = "estimacion", color = "blue") +
+#     facet_wrap( ~ variable2, scales = "free",  labeller = labeller(label = label_wrap_gen(35))) +
+#     labs(x = "Categoría", y = "Porcentaje/Tasa de Incumplimiento") +
+#     theme(strip.text.x = element_text(size = 8))
+# }
+#
+#
+# fix_model <- function(model, sig.level = 0.1, missing_category = "(Missing)", p.min = 0.05, verbose = TRUE) {
+#
+#   iter <- 1
+#   delta <- 0
+#
+#   data <- model$data
+#
+#   while(!model_check(model, sig.level = 0.1, missing_category = "(Missing)")) {
+#
+#     if(verbose) message("Iteration: ", iter)
+#
+#     delta <- delta + delta
+#
+#     vars_to_fix <- c(
+#       model_check_monotonous_detail(model),
+#       model_check_significant_coefficients_detail(model)
+#     ) %>%
+#       unique()
+#
+#     message("\tVariables to treat: ", str_c(vars_to_fix, collapse = ", "))
+#
+#     dfbreaks <- map(vars_to_fix, function(varname){ # varname <- "antiguedad_cmr_cat"
+#
+#       binning(
+#         data[[str_remove(varname, "_cat")]],
+#         data %>%
+#           mutate_(.dots  = set_names(as.character(as.formula(model))[2], nameresponse)) %>%
+#           pull(nameresponse) %>%
+#           as.character() %>%
+#           as.numeric()
+#       )
+#
+#       nameresponse <- str_c(sample(LETTERS, size = 5), collapse = "")
+#
+#
+#
+#        %>%
+#         binning(y = data_train$marca_inc_12m, p.min = PARS$P_MIN_BUCKET + delta)
+#
+#       data
+#
+#     })
+#
+#     dfbreaks <- data_frame(
+#       variable = vars_to_fix,
+#       binning = dfbreaks
+#     )
+#
+#     dfbreaks_tot <- bind_rows(dfbreaks_tot, dfbreaks)
+#
+#     data_trainc <- map_dfr(str_remove(vars_to_fix, "_cat") %>% set_names(., .), create_cat_var)
+#     data_trainc <- rename_all(data_trainc, ~ paste0(.x, "_cat"))
+#
+#     data_train <- data_train %>%
+#       select_(.dots = setdiff(names(data_train), vars_to_fix)) %>%
+#       bind_cols(data_trainc)
+#
+#     modelo <- glm(as.formula(modelo), data = data_train, family = binomial(link = logit))
+#
+#
+#   }
+#
+#
+# }
 
