@@ -1,8 +1,14 @@
+#' Create variable from behavior data
+#' @param data A data frame.
+#' @param id_var The ID var.
+#' @param time_var The TIME var.
+#' @param diff A numeric vector to make sub variables
+#' @param verbose verbose.
+#' @export
 feature_creation <- function(data, id_var = SK_ID_CURR, time_var = MONTHS_BALANCE,
-                             # functions = funs(MAX = max, MIN = min, AVG = mean, VAR = var),
-                             diff = c(6, 12,  24,  48,  96) - 1) {
-
-  message("Starting")
+                             diff = c(6, 12,  24,  48,  96), verbose = TRUE) {
+  # Setup -------------------------------------------------------------------
+  if(verbose) message("Starting Feature Creation")
 
   # bureau_balance_credit_type$MONTHS_BALANCE %>% quantile(0:10/10)
   # id_var <- rlang::expr(SK_ID_CURR)
@@ -15,134 +21,133 @@ feature_creation <- function(data, id_var = SK_ID_CURR, time_var = MONTHS_BALANC
   time_var <- rlang::enquo(time_var)
 
   vars <- data %>%
-    select(-!!time_var, -!!id_var) %>%
+    dplyr::select(-!!time_var, -!!id_var) %>%
     names()
 
-  npad <- diff %>% max() %>% str_length()
+  npad <- diff %>% max() %>% stringr::str_length()
 
-  dcross <- crossing(var = vars, p1 = diff, p2 = diff) %>%
-    mutate_at(2:3, ~ .x %>% str_pad(npad, pad = "0"))
+  dcross <- tidyr::crossing(var = vars, p1 = diff, p2 = diff) %>%
+    dplyr::mutate_at(2:3, ~ .x %>% str_pad(npad, pad = "0"))
 
   # AVGAVG ------------------------------------------------------------------
-  message("\tavg/avg variables")
+  if(verbose) message("\tCalculating avg/avg variables")
   davgavg <- diff %>%
-    map(function(p = 12){
+    purrr::map(function(p = 12){
 
       data %>%
-        filter(!!time_var <= p) %>%
-        group_by(!!id_var) %>%
-        summarise_all(.funs = funs(AVG = mean)) %>%
-        rename_at(-1, ~ p %>% str_pad(npad, pad = "0") %>% str_c(.x, ., sep = "_"))
+        dplyr::filter(!!time_var <= p) %>%
+        dplyr::group_by(!!id_var) %>%
+        dplyr::summarise_all(.funs = dplyr::funs(AVG = mean)) %>%
+        dplyr::rename_at(-1, ~ p %>% str_pad(npad, pad = "0") %>% str_c(.x, ., sep = "_"))
 
     }) %>%
-    reduce(full_join, by = id_var_char)
+    dplyr::reduce(dplyr::full_join, by = id_var_char)
 
   dcross_trends <- dcross %>%
-    filter(p1 < p2) %>%
-    mutate(
-      name = str_c(var, "_AVG_TREND_", p1, "_", p2),
-      operation = str_c(var, "_AVG_", p1, "/", var, "_AVG_", p2)
+    dplyr::filter(p1 < p2) %>%
+    dplyr::mutate(
+      name = stringr::str_c(var, "_AVG_TREND_", p1, "_", p2),
+      operation = stringr::str_c(var, "_AVG_", p1, "/", var, "_AVG_", p2)
     ) %>%
-    select(name, operation) %>%
-    deframe()
+    dplyr::select(name, operation) %>%
+    tibble::deframe()
 
   davgavg <- davgavg %>%
-    mutate_(.dots = dcross_trends) %>%
-    select_(.dots = c(id_var_char, names(dcross_trends))) %>%
-    mutate_all(replace_na, 0)
+    dplyr::mutate_(.dots = dcross_trends) %>%
+    dplyr::select_(.dots = c(id_var_char, names(dcross_trends))) %>%
+    dplyr::mutate_all(replace_na, 0)
 
   gc(verbose = FALSE)
 
   # MINMAX ------------------------------------------------------------------
-  message("\tmin/max variables")
+  if(verbose) message("\tCalculating min/max variables")
   dminmax <- diff %>%
-    map(function(p = 12){
+    purrr::map(function(p = 12){
 
       data %>%
-        filter(!!time_var <= p) %>%
-        group_by(!!id_var) %>%
-        summarise_all(.funs = funs(MIN = min, MAX = max)) %>%
-        rename_at(-1, ~ p %>% str_pad(npad, pad = "0") %>% str_c(.x, ., sep = "_"))
+        dplyr::filter(!!time_var <= p) %>%
+        dplyr::group_by(!!id_var) %>%
+        dplyr::summarise_all(.funs = dplyr::funs(MIN = min, MAX = max)) %>%
+        dplyr::rename_at(-1, ~ p %>% str_pad(npad, pad = "0") %>% str_c(.x, ., sep = "_"))
 
     }) %>%
-    reduce(full_join, by = id_var_char)
+    dplyr::reduce(dplyr::full_join, by = id_var_char)
 
   dcross_minmax <- dcross %>%
-    filter(p1 == p2) %>%
-    mutate(
-      name = str_c(var, "_MIN_MAX_", p1),
-      operation = str_c(var, "_MIN_", p1, "/", var, "_MAX_", p2)
+    dplyr::filter(p1 == p2) %>%
+    dplyr::mutate(
+      name = stringr::str_c(var, "_MIN_MAX_", p1),
+      operation = stringr::str_c(var, "_MIN_", p1, "/", var, "_MAX_", p2)
     ) %>%
-    select(name, operation) %>%
-    deframe()
+    dplyr::select(name, operation) %>%
+    tibble::deframe()
 
   dminmax <- dminmax %>%
-    mutate_(.dots = dcross_minmax) %>%
-    select_(.dots = c(id_var_char, names(dcross_minmax))) %>%
-    mutate_all(replace_na, 0)
+    dplyr::mutate_(.dots = dcross_minmax) %>%
+    dplyr::select_(.dots = c(id_var_char, names(dcross_minmax))) %>%
+    dplyr::mutate_all(tidyr::replace_na, 0)
 
   gc(verbose = FALSE)
 
   # AVGMAX ------------------------------------------------------------------
-  message("\tavg/max variables")
+  if(verbose) message("\tCalculating avg/max variables")
   davgmax <- diff %>%
-    map(function(p = 12){
+    purrr::map(function(p = 12){
 
       data %>%
-        filter(!!time_var <= p) %>%
-        group_by(!!id_var) %>%
-        summarise_all(.funs = funs(AVG = mean, MAX = max)) %>%
-        rename_at(-1, ~ p %>% str_pad(npad, pad = "0") %>% str_c(.x, ., sep = "_"))
+        dplyr::filter(!!time_var <= p) %>%
+        dplyr::group_by(!!id_var) %>%
+        dplyr::summarise_all(.funs = dplyr::funs(AVG = mean, MAX = max)) %>%
+        dplyr::rename_at(-1, ~ p %>% str_pad(npad, pad = "0") %>% str_c(.x, ., sep = "_"))
 
     }) %>%
-    reduce(full_join, by = id_var_char)
+    purrr::reduce(full_join, by = id_var_char)
 
   dcross_avgmax <- dcross %>%
-    filter(p1 == p2) %>%
+    dplyr::filter(p1 == p2) %>%
     mutate(
-      name = str_c(var, "_AVG_MAX_", p1),
-      operation = str_c(var, "_AVG_", p1, "/", var, "_MAX_", p2)
+      name = stringr::str_c(var, "_AVG_MAX_", p1),
+      operation = stringr::str_c(var, "_AVG_", p1, "/", var, "_MAX_", p2)
     ) %>%
-    select(name, operation) %>%
-    deframe()
+    dplyr::select(name, operation) %>%
+    tibble::deframe()
 
   davgmax <- davgmax %>%
-    mutate_(.dots = dcross_avgmax) %>%
-    select_(.dots = c(id_var_char, names(dcross_avgmax))) %>%
-    mutate_all(replace_na, 0)
+    dplyr::mutate_(.dots = dcross_avgmax) %>%
+    dplyr::select_(.dots = c(id_var_char, names(dcross_avgmax))) %>%
+    dplyr::mutate_all(replace_na, 0)
 
   gc(verbose = FALSE)
 
-
   # REC ANT -----------------------------------------------------------------
-  message("\trec ant variables")
+  if(verbose) message("\tCalculating rec ant variables")
   drecant <- map(vars, function(x){
 
     data %>%
-      select(!!id_var, !!time_var, x) %>%
-      filter(!!time_var <= max(diff)) %>%
-      filter(!!sym(x) > 0) %>%
-      group_by(!!id_var) %>%
-      summarize(
+      dplyr::select(!!id_var, !!time_var, x) %>%
+      dplyr::filter(!!time_var <= max(diff)) %>%
+      dplyr::filter(!!sym(x) > 0) %>%
+      dplyr::group_by(!!id_var) %>%
+      dplyr::summarize(
         REC = min(!!time_var),  ANT = max(!!time_var)
       ) %>%
-      mutate(
+      dplyr::mutate(
         DIFF_REC_ANT = ANT - REC
       ) %>%
-      rename_at(-1, ~ paste(x, .x, sep = "_"))
+      dplyr::rename_at(-1, ~ paste(x, .x, sep = "_"))
 
   }) %>%
-    reduce(full_join, by = id_var_char)
+    dplyr::reduce(dplyr::full_join, by = id_var_char)
 
   # OUT ---------------------------------------------------------------------
-  message("\tjoining variables")
+  if(verbose) message("\tCalculating Joining variables")
   dout <- list(
     davgavg,
     dminmax,
     davgmax,
     drecant
   ) %>%
-    reduce(full_join, by = id_var_char)
+    purrr::reduce(dplyr::full_join, by = id_var_char)
 
   rm(davgavg, dminmax, davgmax, drecant)
   gc()
@@ -150,3 +155,5 @@ feature_creation <- function(data, id_var = SK_ID_CURR, time_var = MONTHS_BALANC
   dout
 
 }
+
+

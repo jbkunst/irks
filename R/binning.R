@@ -257,6 +257,7 @@ apply_binning <- function(bin, x, woe = FALSE) {
 
       xnew <- cut(x, breaks = brks, include.lowest = TRUE)
       xnew <- forcats::fct_explicit_na(xnew, na_level = bin$na_level)
+      xnew <- forcats::fct_relevel(xnew, bin$na_level)
 
     }
 
@@ -267,6 +268,9 @@ apply_binning <- function(bin, x, woe = FALSE) {
     xnew <- data.frame(x, stringsAsFactors = FALSE) %>%
       dplyr::left_join(bin$dict, by = "x") %>%
       dplyr::pull("group")
+
+    if(bin$na_level %in% levels(xnew))
+      xnew <- forcats::fct_relevel(xnew, bin$na_level)
 
   }
 
@@ -279,6 +283,49 @@ apply_binning <- function(bin, x, woe = FALSE) {
   }
 
   xnew
+
+}
+
+
+
+
+#' Apply binnings
+#' @param binnings A named list of \code{binning} objects.
+#' @param data A data frame containing variables to bin. Names need need to
+#'   coincide.
+#' @param woe If the value is the woe instead of the categoric variable.
+#' @param suffix A string to be added to the output to disambiguate the original
+#'   variables names.
+#' @examples
+#'
+#' data("german_credit")
+#'
+#' dbiv <- describe_bivariate(german_credit, target = good_bad)
+#' dbiv <- dplyr::filter(dbiv, iv > 0.1)
+#'
+#' binnings <- dplyr::select(dbiv, variable, binning)
+#' binnings <- tibble::deframe(binnings)
+#'
+#' data <- dplyr::select(german_credit, credit_amount, property,
+#'                       purpose, credit_history, good_bad)
+#'
+#' apply_binnings(binnings, data)
+#'
+#' @export
+apply_binnings <- function(binnings, data, woe = FALSE, suffix = "_cat") {
+
+  variables <- data %>%
+    dplyr::select(dplyr::one_of(names(binnings))) %>%
+    as.list()
+
+  binnings <- binnings[names(variables)]
+
+  dout <- purrr::map2(binnings, variables, irks::apply_binning, woe = woe) %>%
+    purrr::map_dfc(dplyr::as_data_frame) %>%
+    purrr::set_names(names(variables)) %>%
+    dplyr::rename_all(paste0, suffix)
+
+  dout
 
 }
 

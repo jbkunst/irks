@@ -17,27 +17,22 @@ model_summary <- function(model) {
   # model <- readRDS("D:/Docs/modelo-behavior/data/23/05_modelo.rds")
   # model_summary(model)
 
-  response <- model %>%
+  response_variable <- model %>%
     stats::as.formula() %>%
     as.character() %>%
     .[2] %>%
     stringr::str_remove_all("factor\\(|\\)")
 
-  variables <- model %>%
-    as.formula() %>%
-    as.character() %>%
-    .[3] %>%
-    stringr::str_split(" \\+ ") %>%
-    unlist()
+  variables <- irks:::model_variables(model)
 
   dmod <- model$data %>%
-    dplyr::select_(.dots = c(response, variables)) %>%
+    dplyr::select_(.dots = c(response_variable, variables)) %>%
     dplyr::mutate_if(is.factor, as.character) %>%
     tidyr::gather("key", "value", variables) %>%
     dplyr::group_by(!!!syms(c("key", "value"))) %>%
     dplyr::summarise(
       p = n(),
-      target_rate = mean(!!sym(response))
+      target_rate = mean(!!sym(response_variable))
     ) %>%
     dplyr::group_by(!!sym("key")) %>%
     dplyr::mutate(p = p/sum(p)) %>%
@@ -46,6 +41,9 @@ model_summary <- function(model) {
       term = paste0(key, value),
       key = factor(key, levels = variables)
     )
+
+  # dmod %>% dplyr::count()
+  # dmod %>% dplyr::group_by(key) %>% dplyr::summarise(sum(p))
 
   dmod1 <- dplyr::tbl_df(broom::tidy(model))
 
@@ -56,7 +54,10 @@ model_summary <- function(model) {
       key = ifelse(term == "(Intercept)", "(Intercept)", key),
       key = forcats::fct_inorder(key)
     ) %>%
-    dplyr::select(term, variable = key, category = value, estimate, std.error, p.value, marginal_percent = p, target_rate)
+    dplyr::select(variable = key, term, category = value, estimate, std.error, p.value, marginal_percent = p, target_rate)
+
+  # dmod %>% dplyr::filter(is.na(estimate))
+  # dmod %>% dplyr::group_by(variable) %>% dplyr::summarise(sum(marginal_percent))
 
   lvls <- purrr::map2(
     names(model$xlevels),
@@ -64,8 +65,8 @@ model_summary <- function(model) {
     ~ dplyr::data_frame(variable = .x, category = .y)
   ) %>%
     purrr::reduce(dplyr::bind_rows) %>%
-    dplyr::bind_rows(dplyr::data_frame(variable = "(Intercept)")) %>%
     tidyr::unite(!!sym("term"), !!sym("variable"), !!sym("category"), sep = "") %>%
+    dplyr::bind_rows(dplyr::data_frame(term = "(Intercept)"), .) %>%
     dplyr::pull()
 
   dmod <- dmod %>%
@@ -73,19 +74,13 @@ model_summary <- function(model) {
     dplyr::arrange(!!sym("t2")) %>%
     dplyr::select(-!!sym("t2"))
 
+  # dmod %>% dplyr::group_by(variable) %>% dplyr::summarise(sum(marginal_percent))
   dmod
 }
 
-#' Creating a scorecard from logistic model
-#'
-#' The defaults are given by de Siddiqi example.
+#' Plot a model
 #'
 #' @param model A glm logistic model
-#' @param pdo default 20
-#' @param score0 default 600
-#' @param pdo0 default to 50/1
-#' @param turn.orientation change the orientation of the scorecard points
-#'
 #' @examples
 #'
 #' data("german_credit")
@@ -95,60 +90,26 @@ model_summary <- function(model) {
 #'   data = german_credit, family = binomial
 #'   )
 #'
-#' scorecard(model)
+#' model_plot(model)
 #'
 #' @export
-scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientation = FALSE) {
-
-  # model <- readRDS("D:/Docs/modelo-behavior/data/23/05_modelo.rds")
-  # pdo <- 20; score0 <- 600; pdo0 <- 50;  turn.orientation = TRUE
-
-  if(turn.orientation) {
-
-    fmla <- as.formula(model)
-
-    response <- as.character(fmla)[2]
-
-    response_name <- stringi::stri_rand_strings(1, length = 10, pattern = "[A-Za-z]")
-
-    response <- model$data %>%
-      dplyr::mutate_(response_name = response) %>%
-      dplyr::pull(response_name)
-
-    if(is.numeric(response)) {
-      response <- 1 - response
-    } else {
-      response <- forcats::fct_rev(factor(response))
-    }
-
-    model$data[[response_name]] <- response
-
-    fmla2 <- as.formula(paste(response_name, " ~ ", as.character(fmla)[3]))
-
-    model <- glm(fmla2, data = model$data, family = binomial(link = logit))
-
-  }
-
-  mod <- model_summary(model)
-
-  b0 <- model$coefficients[1]
-
-  a <- pdo/log(2)
-  b <- score0 - (a * log(pdo0))
-  k <- length(model$xlevels)
-
-  pb <- (score0 + a * b0) / k
-
-  modscorecard <- mod %>%
-    dplyr::select(!!!syms(c("term", "estimate"))) %>%
-    dplyr::mutate_(
-      "score" = "as.integer(floor(a * ifelse(is.na(estimate), 0, estimate) + pb))"
-    )
-
-  modscorecard
-
+model_plot <- function(model){
+  model %>%
+    irks::model_summary() %>%
+    dplyr::filter(variable != "(Intercept)") %>%
+    dplyr::mutate(category = forcats::fct_inorder(category)) %>%
+    dplyr::mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
+    dplyr::mutate(variable2 = as.character(variable)) %>%
+    dplyr::mutate(variable2 = forcats::fct_inorder(variable2)) %>%
+    ggplot2::ggplot() +
+    # geom_col(aes(category, marginal_percent), width = 0.5, fill = "gray80") +
+    ggplot2::geom_col(ggplot2::aes(category, marginal_percent), group = "estimacion", color = NA, alpha = 0.2, width = 0.3) +
+    ggplot2::geom_line(ggplot2::aes(category, target_rate), group = "target_rate_dev", color = "red") +
+    ggplot2::geom_line(ggplot2::aes(category, estimate), group = "estimacion", color = "blue") +
+    ggplot2::facet_wrap( ~ variable2, scales = "free",  labeller = ggplot2::labeller(label = ggplot2::label_wrap_gen(35))) +
+    ggplot2::labs(x = "Categoría", y = "Porcentaje/Tasa de Incumplimiento") +
+    ggplot2::theme(strip.text.x = ggplot2::element_text(size = 8))
 }
-
 
 model_variables <- function(model) {
 
@@ -156,12 +117,11 @@ model_variables <- function(model) {
   model %>%
     as.formula() %>%
     as.character() %>%
-    last() %>%
-    str_split("\\s\\+\\s") %>%
+    dplyr::last() %>%
+    stringr::str_split("\\s\\+\\s") %>%
     unlist()
 
 }
-
 
 # model <- readRDS("data-raw/modelo.rds")
 model_check <- function(model, sig.level = 0.1, missing_category = "(Missing)")  {
@@ -175,7 +135,7 @@ model_check_significant_coefficients_detail <- function(model, sig.level = 0.1) 
 
   irks::model_summary(model) %>%
     dplyr::filter(p.value >= sig.level) %>%
-    pull(variable) %>%
+    dplyr::pull(variable) %>%
     unique() %>%
     as.character()
 
@@ -199,13 +159,28 @@ model_check_monotonous_detail <- function(model, missing_category = "(Missing)")
     pull(name)
 
   # model <- modelostep
-  irks::model_summary(model) %>%
+  # model_plot(model)
+  msummary <- irks::model_summary(model) %>%
     filter(variable != "(Intercept)") %>%
     filter(variable %in% str_c(numeric_variables, "_cat", sep = "")) %>%
-    filter(category != missing_category) %>%
     mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
+    # filter(category != missing_category) %>%
     select(variable, category, estimate, target_rate) %>%
     group_by(variable) %>%
+    mutate(
+      estimate_rank = rank(estimate),
+      target_rate_rank = rank(target_rate)
+    )
+
+  # variables which does not keep the rank of the target rate/estimate
+  v1 <- msummary %>%
+    filter(estimate_rank != target_rate_rank) %>%
+    distinct(variable) %>%
+    pull(1) %>%
+    as.character()
+
+  v2 <- msummary %>%
+    filter(category != missing_category) %>%
     mutate(
       diff_estimate = c(NA, diff(estimate)),
       diff_target_rate = c(NA, diff(target_rate)),
@@ -220,6 +195,8 @@ model_check_monotonous_detail <- function(model, missing_category = "(Missing)")
     pull(variable) %>%
     as.character()
 
+  as.character(unique(c(v1, v2)))
+
 }
 
 model_check_monotonous <- function(model, missing_category = "(Missing)") {
@@ -227,25 +204,6 @@ model_check_monotonous <- function(model, missing_category = "(Missing)") {
   length(model_check_monotonous_detail(model, missing_category)) == 0
 
 }
-
-model_plot <- function(model){
-  model %>%
-    irks::model_summary() %>%
-    filter(variable != "(Intercept)") %>%
-    mutate(category = fct_inorder(category)) %>%
-    mutate(estimate = ifelse(is.na(estimate), 0, estimate)) %>%
-    mutate(variable2 = as.character(variable)) %>%
-    mutate(variable2 = fct_inorder(variable2)) %>%
-    ggplot() +
-    # geom_col(aes(category, marginal_percent), width = 0.5, fill = "gray80") +
-    geom_col(aes(category, marginal_percent), group = "estimacion", color = NA, alpha = 0.2, width = 0.3) +
-    geom_line(aes(category, target_rate), group = "target_rate_dev", color = "red") +
-    geom_line(aes(category, estimate), group = "estimacion", color = "blue") +
-    facet_wrap( ~ variable2, scales = "free",  labeller = labeller(label = label_wrap_gen(35))) +
-    labs(x = "Categoría", y = "Porcentaje/Tasa de Incumplimiento") +
-    theme(strip.text.x = element_text(size = 8))
-}
-
 
 
 # model <- readRDS("data-raw/modelo2.rds")

@@ -1,3 +1,10 @@
+max_concentration <- function(x){
+  x %>%
+    table(useNA = "always") %>%
+    prop.table() %>%
+    max()
+}
+
 partial_na_rm_true <- function(f, ...) {
   purrr::partial(f, na.rm = TRUE, ...)
 }
@@ -100,7 +107,8 @@ describe <- function(data) {
           max        = partial_na_rm_true(max),
           Variance   = partial_na_rm_true(var),
           skewness   = partial_na_rm_true(moments::skewness),
-          kurtosis   = partial_na_rm_true(moments::kurtosis)
+          kurtosis   = partial_na_rm_true(moments::kurtosis),
+          max.concentration = max_concentration
           # quantiles = function(x) t(purrr::partial(quantile, probs = c(1, 5, 10, 25, 50, 75, 90, 95, 99)/100)(x))
         )
       )
@@ -128,7 +136,8 @@ describe <- function(data) {
           # class      = class,
           n.unique   = n_uniques,
           na.percent = na_percent,
-          hhi        = hhi
+          hhi        = hhi,
+          max.concentration = max_concentration
         )
       )
 
@@ -155,7 +164,7 @@ describe <- function(data) {
 #' @param p.min Minimal proportion in a group (a ctree_control argument).
 #' @param alpha Minimal critetion (a ctree_control argument).
 #' @param verbose verbose.
-# #' @param ... Additional parameters for \code{binning} function.
+#  @param ... Additional parameters for \code{binning} function.
 #' @examples
 #'
 #' data("german_credit")
