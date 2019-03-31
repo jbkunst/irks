@@ -2,9 +2,7 @@ Package: irks
 Type: Package
 Title: Tools for credit risk modelling
 Version: 0.3.2
-Authors@R: c(
-    person("Joshua", "Kunst", "jbkunst@gmail.com", role = c("aut", "cre"))
-    )
+Authors@R: c(person("Joshua", "Kunst", "jbkunst@gmail.com", role = c("aut", "cre")))
 Maintainer: Joshua Kunst <jbkunst@gmail.com>
 Description: A set of functions to help the development, implementation and
     monitoring scorecards.
