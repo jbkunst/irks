@@ -17,7 +17,7 @@ Plot a model
 data("german_credit")
 
 model <- glm(
-  good_bad ~ purpose + present_employment_since + credit_history,
+  good_bad ~ present_employment_since + credit_history,
   data = german_credit, family = binomial
   )
 

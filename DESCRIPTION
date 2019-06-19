@@ -1,7 +1,7 @@
 Package: irks
 Type: Package
 Title: Tools for credit risk modelling
-Version: 0.3.2
+Version: 0.3.3
 Authors@R: c(
     person("Joshua", "Kunst", ,"jbkunst@gmail.com", role = c("aut", "cre"))
     )
@@ -34,4 +34,4 @@ Imports:
   moments
 Depends: 
     R (>= 2.10)
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

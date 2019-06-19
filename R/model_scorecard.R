@@ -77,60 +77,6 @@ model_scorecard <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.ori
 
 }
 
-model_scorecard_wrong <- function(model, pdo = 20, score0 = 600, pdo0 = 50/1, turn.orientation = FALSE) {
-
-  # model <- readRDS("D:/Docs/modelo-behavior/data/23/05_modelo.rds")
-  # pdo <- 20; score0 <- 600; pdo0 <- 50;  turn.orientation = TRUE
-
-  if(turn.orientation) {
-
-    fmla <- as.formula(model)
-
-    response <- as.character(fmla)[2]
-
-    response_name <- stringi::stri_rand_strings(1, length = 10, pattern = "[A-Za-z]")
-
-    response <- model$data %>%
-      dplyr::mutate_(response_name = response) %>%
-      dplyr::pull(response_name)
-
-    if(is.numeric(response)) {
-      response <- 1 - response
-    } else {
-      response <- forcats::fct_rev(factor(response))
-    }
-
-    model$data[[response_name]] <- response
-
-    fmla2 <- as.formula(paste(response_name, " ~ ", as.character(fmla)[3]))
-
-    model <- glm(fmla2, data = model$data, family = binomial(link = logit))
-
-  }
-
-  b0 <- model$coefficients[1]
-
-  a <- pdo/log(2)
-  b <- score0 - (a * log(pdo0))
-  k <- length(model$xlevels)
-
-  pb <- (score0 + a * b0) / k
-
-  # pb <- floor(pb)
-  # pb <- (b + a * b0) / k
-  # pb <- floor(pb)
-
-  modscorecard <- irks::model_summary(model) %>%
-    dplyr::select(!!!syms(c("term", "estimate"))) %>%
-    dplyr::mutate(
-      score = as.integer(floor(a * ifelse(is.na(!!sym("estimate")), 0, !!sym("estimate")) + pb)),
-      # score = ifelse(!!sym("term") == "(Intercept)", floor(pb), score)
-    )
-
-  modscorecard
-
-}
-
 #' Obntaing the weigths and score for every variable in the model
 #'
 #' @param model A glm logistic model
@@ -163,8 +109,8 @@ model_predict <- function(model, newdata = NULL, pdo = 20, score0 = 600, pdo0 = 
   # pdo = 20; score0 = 600; pdo0 = 50/1; turn.orientation = TRUE
 
   beta <- coefficients(model)
-  message("WARNING: Using 'model_scorecard_wrong' instead of 'model_scorecard'")
-  score <- irks:::model_scorecard_wrong(model, pdo = pdo, score0 = score0, pdo0 = pdo0, turn.orientation = turn.orientation) %>%
+
+  score <- irks:::model_scorecard(model, pdo = pdo, score0 = score0, pdo0 = pdo0, turn.orientation = turn.orientation) %>%
     dplyr::filter(!is.na(estimate)) %>%
     dplyr::select(-estimate) %>%
     tibble::deframe()

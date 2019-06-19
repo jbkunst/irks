@@ -19,10 +19,11 @@ binning <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ke
 # @param p.min Minimal proportion in a group (a ctree_control argument).
 # @param alpha Minimal critetion (a ctree_control argument).
 # @param na_level String for determinar de NA level.
+# @param na_level String for determinar de NA level.
 # @param ... Additional arguments for the binning process.
 #' @rdname binning
 #' @export
-binning.default <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...) {
+binning.default <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", keeptree = FALSE, ...) {
   stop("Objects of class/type ", paste(class(x), collapse = "/"),
        " are not supported by binning (yet).", call. = FALSE)
 }
@@ -39,7 +40,7 @@ binning.default <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missi
 #'
 #' data(german_credit)
 #' binning(german_credit$duration_in_month, german_credit$good_bad)
-#' binning(german_credit$credit_amount, german_credit$good_bad)
+#' binning(x = german_credit$credit_amount, y = german_credit$good_bad)
 #'
 #' @export
 binning.numeric <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", keeptree = FALSE, ...){
@@ -115,7 +116,7 @@ binning.numeric <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missi
   )
 
   if(keeptree){
-    out["tree"] <- tree
+    out[["tree"]] <- t
   }
 
   class(out) <- "binning"
@@ -194,7 +195,7 @@ binning.character <- function(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Mis
   )
 
   if(keeptree){
-    out["tree"] <- tree
+    out[["tree"]] <- t
   }
 
   class(out) <- "binning"

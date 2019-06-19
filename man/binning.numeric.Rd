@@ -5,7 +5,7 @@
 \title{Grouping or binning for numeric variables}
 \usage{
 \method{binning}{numeric}(x, y, p.min = 0.05, alpha = 0.05,
-  na_level = "(Missing)", ...)
+  na_level = "(Missing)", keeptree = FALSE, ...)
 }
 \arguments{
 \item{x}{A variable to binning.}
@@ -18,6 +18,8 @@
 
 \item{na_level}{String for determinar de NA level.}
 
+\item{keeptree}{logical to keep tree.}
+
 \item{...}{Extra arguments to \code{ctree_control}.}
 }
 \description{
@@ -27,6 +29,6 @@ Grouping or binning for numeric variables
 
 data(german_credit)
 binning(german_credit$duration_in_month, german_credit$good_bad)
-binning(german_credit$credit_amount, german_credit$good_bad)
+binning(x = german_credit$credit_amount, y = german_credit$good_bad)
 
 }

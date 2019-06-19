@@ -1,3 +1,7 @@
+# irks 0.3.3
+
+* Agregamos keeptree a binning para guardar el arbol.
+
 # irks 0.2.0
 
 * Added `binning`, `apply_binning`, `model_summary`, `scorecard`, `roc_data`, 

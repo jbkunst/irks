@@ -4,8 +4,8 @@
 \alias{feature_selection_raw}
 \title{Perform a very raw Feature Selection}
 \usage{
-feature_selection_raw(data, target = TARGET, max_concentration_limit = 0.9,
-  min_iv = 0.2, verbose = TRUE, ...)
+feature_selection_raw(data, target = TARGET,
+  max_concentration_limit = 0.9, min_iv = 0.2, verbose = TRUE, ...)
 }
 \arguments{
 \item{data}{A data frame to perform the feature selection.}

@@ -5,7 +5,7 @@
 \title{Grouping or binning character/factors variables}
 \usage{
 \method{binning}{character}(x, y, p.min = 0.05, alpha = 0.05,
-  na_level = "(Missing)", ...)
+  na_level = "(Missing)", keeptree = FALSE, ...)
 }
 \arguments{
 \item{x}{A variable to binning.}
@@ -17,6 +17,8 @@
 \item{alpha}{Minimal critetion (a ctree_control argument).}
 
 \item{na_level}{String for determinar de NA level.}
+
+\item{keeptree}{logical to keep tree.}
 
 \item{...}{Extra arguments to \code{ctree_control}.
 

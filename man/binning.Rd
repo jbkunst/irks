@@ -5,10 +5,11 @@
 \alias{binning.default}
 \title{Grouping or binning}
 \usage{
-binning(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...)
+binning(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)",
+  keeptree = FALSE, ...)
 
 \method{binning}{default}(x, y, p.min = 0.05, alpha = 0.05,
-  na_level = "(Missing)", ...)
+  na_level = "(Missing)", keeptree = FALSE, ...)
 }
 \arguments{
 \item{x}{A variable to binning.}
@@ -20,6 +21,8 @@ binning(x, y, p.min = 0.05, alpha = 0.05, na_level = "(Missing)", ...)
 \item{alpha}{Minimal critetion (a ctree_control argument).}
 
 \item{na_level}{String for determinar de NA level.}
+
+\item{keeptree}{logical to keep tree.}
 
 \item{...}{Additional arguments for the binning process.}
 }
